@@ -1,0 +1,23 @@
+[project]
+name = "openweatherwrap"
+version = "0.1.0"
+readme = "README.md"
+authors= [
+    { name = "lythox", email= "lythox@lxio.dev" }
+]
+description = "A wrapper for the Openweathermap API"
+requires-python = ">=3.10"
+classifiers = [
+    "Programming Language :: Python :: 3",
+]
+dependencies = [
+    "requests",
+    "geopy"
+]
+
+[build-system]
+requires = ["flit_core<4"]
+build-backend = "flit_core.buildapi"
+
+[project.urls]
+Home = "https://lxio.dev"
