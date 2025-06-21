@@ -1,5 +1,6 @@
-"""OpenWeatherMap API Wrapper classes.
-The classes are designed to be used with the corresponding OpenWeatherMap API endpoints.
+"""
+Classes for handling OpenWeatherMap API requests.
+These classes are designed to be used with the corresponding OpenWeatherMap API endpoints.
 
 Example: If you want to use the One Call API, you can create an instance of the OneCallAPI class.
 """
@@ -8,14 +9,21 @@ import requests
 from typing import Literal
 from geopy.geocoders import Nominatim
 
-from .core import AirPollutionResponse, CurrentWeatherResponse, GeocodingResponse, OneCallResponse, FiveDayForecastResponse
+from .core import AirPollutionResponse, CurrentWeatherResponse, GeocodingResponse, OneCallResponse, FiveDayForecastResponse, WeatherStation
 
 from .errors import *
 
 class OpenWeatherMapAPI:
+    """
+    Base class for OpenWeatherMap API wrappers.
+
+    This class does not make any API calls itself, but provides common functionality for all OpenWeatherMap API wrappers.
+    """
     def __init__(self, api_key: str, location: str | tuple, language: str='en', units: Literal['standard', 'metric', 'imperial'] = 'standard') -> None:
         """
         Base class for the OpenWeatherMap API wrapper.
+
+        This class does not make any API calls itself, but provides common functionality for all OpenWeatherMap API wrappers.
 
         :param api_key: Your OpenWeatherMap API key.
         :param location: Location as a string (city name) or a tuple (latitude, longitude).
@@ -45,20 +53,23 @@ class OpenWeatherMapAPI:
             else:
                 if not (-90 <= location[0] <= 90 and -180 <= location[1] <= 180):
                     raise ValueError("Latitude must be between -90 and 90, and longitude must be between -180 and 180.")
-    
+
     def __str__(self) -> str:
         """
         Returns a string representation of the OneCallAPI instance.
-        
+
         :return: String representation of the OneCallAPI instance.
         """
         return f"{self.__class__.__name__}(api_key={self.api_key}, location={self.location}, language={self.language}, units={self.units})"
-    
-            
+
+
 class OneCallAPI(OpenWeatherMapAPI):
+    """Wrapper for the One Call API from OpenWeatherMap."""
     def __init__(self, api_key: str, location: str | tuple, language: str = 'en', units: Literal['standard', 'metric', 'imperial'] = 'standard') -> None:
         """
-        Wrapper for the One Call API from OpenWeatherMap.
+        Initializes the OneCall API wrapper.
+
+        This class provides access to the One Call API from OpenWeatherMap, which allows you to get current weather, minute-by-minute precipitation forecasts, hourly forecasts, daily forecasts, and weather alerts for a specific location.
 
         :param api_key: Your OpenWeatherMap API key.
         :param location: Location as a string (city name) or a tuple (latitude, longitude).
@@ -83,7 +94,7 @@ class OneCallAPI(OpenWeatherMapAPI):
         """
         Fetches the weather data from the one call API and returns the response as a `OneCallResponse` object.
         The response includes all available weather data for the specified location.
-        
+
         :param exclude: List of data types to exclude from the response. Options are 'current', 'minutely', 'hourly', 'daily', 'alerts'.
 
         :returns response: `OneCallResponse` object containing the weather data.
@@ -98,29 +109,33 @@ class OneCallAPI(OpenWeatherMapAPI):
         if exclude_str:
             url = self.url + f"&exclude={exclude_str}"
         else:
-            url = self.url    
+            url = self.url
         data = requests.get(url)
         if data.status_code == 200:
             return OneCallResponse(data.json())
         else:
+            try:
+                error_message = data.json().get('message', data.text)
+            except Exception:
+                error_message = data.text
             match data.status_code:
                 case 400000:
-                    raise SubscriptionLevelError()
+                    raise SubscriptionLevelError(error_message)
                 case 401:
-                    raise InvalidAPIKeyError()
+                    raise InvalidAPIKeyError(error_message)
                 case 404:
-                    raise NotFoundError()
+                    raise NotFoundError(error_message)
                 case 429:
-                    raise TooManyRequestsError()
-                case 500 | 502 | 503 | 504:
-                    raise OpenWeatherMapException()
+                    raise TooManyRequestsError(error_message)
+                case _:
+                    raise OpenWeatherMapException(error_message)
 
     def get_timed_weather(self, timestamp: int) -> OneCallResponse:
         """
         Fetches the weather data for a specific timestamp from the one call API and returns the response as a `OneCallResponse` object.
 
         Data is available from January 1, 1979 up to 4 days ahead of the current date.
-        
+
         :param timestamp: Unix timestamp for which to fetch the weather data.
         :returns response: `OneCallResponse` object containing the weather data for the specified timestamp.
 
@@ -138,22 +153,26 @@ class OneCallAPI(OpenWeatherMapAPI):
         if data.status_code == 200:
             return OneCallResponse(data.json())
         else:
+            try:
+                error_message = data.json().get('message', data.text)
+            except Exception:
+                error_message = data.text
             match data.status_code:
                 case 400000:
-                    raise SubscriptionLevelError()
+                    raise SubscriptionLevelError(error_message)
                 case 401:
-                    raise InvalidAPIKeyError()
+                    raise InvalidAPIKeyError(error_message)
                 case 404:
-                    raise NotFoundError()
+                    raise NotFoundError(error_message)
                 case 429:
-                    raise TooManyRequestsError()
-                case 500 | 502 | 503 | 504:
-                    raise OpenWeatherMapException()
-                
+                    raise TooManyRequestsError(error_message)
+                case _:
+                    raise OpenWeatherMapException(error_message)
+
     def get_aggregation(self, date: str) -> OneCallResponse:
         """
         Fetches the weather data for a specific date from the one call API and returns the response as a `OneCallResponse` object.
-        
+
         :param date: Date in the ISO 8601 format 'YYYY-MM-DD' for which to fetch the weather data.
         :returns response: `OneCallResponse` object containing the weather data for the specified date.
 
@@ -168,24 +187,28 @@ class OneCallAPI(OpenWeatherMapAPI):
         if data.status_code == 200:
             return OneCallResponse(data.json())
         else:
+            try:
+                error_message = data.json().get('message', data.text)
+            except Exception:
+                error_message = data.text
             match data.status_code:
                 case 400000:
-                    raise SubscriptionLevelError()
+                    raise SubscriptionLevelError(error_message)
                 case 401:
-                    raise InvalidAPIKeyError()
+                    raise InvalidAPIKeyError(error_message)
                 case 404:
-                    raise NotFoundError()
+                    raise NotFoundError(error_message)
                 case 429:
-                    raise TooManyRequestsError()
-                case 500 | 502 | 503 | 504:
-                    raise OpenWeatherMapException()
-                
+                    raise TooManyRequestsError(error_message)
+                case _:
+                    raise OpenWeatherMapException(error_message)
+
     def get_overview(self) -> str:
         """
         Fetches a brief, human-readable overview of the weather data for the specified location.
-        
+
         :returns response: A string containing a brief overview of the weather data.
-        
+
         :raises SubscriptionLevelError: If the API key does not have access to the requested data.
         :raises InvalidAPIKeyError: If the API key is invalid.
         :raises NotFoundError: If the location is not found.
@@ -197,18 +220,22 @@ class OneCallAPI(OpenWeatherMapAPI):
         if data.status_code == 200:
             return data.json().get('weather_overview', 'No overview available.')
         else:
+            try:
+                error_message = data.json().get('message', data.text)
+            except Exception:
+                error_message = data.text
             match data.status_code:
                 case 400000:
-                    raise SubscriptionLevelError()
+                    raise SubscriptionLevelError(error_message)
                 case 401:
-                    raise InvalidAPIKeyError()
+                    raise InvalidAPIKeyError(error_message)
                 case 404:
-                    raise NotFoundError()
+                    raise NotFoundError(error_message)
                 case 429:
-                    raise TooManyRequestsError()
-                case 500 | 502 | 503 | 504:
-                    raise OpenWeatherMapException()
-                
+                    raise TooManyRequestsError(error_message)
+                case _:
+                    raise OpenWeatherMapException(error_message)
+
 class CurrentWeatherAPI(OpenWeatherMapAPI):
     """Wrapper for the Current Weather Data API from OpenWeatherMap."""
     def __init__(self, api_key: str, location: str | tuple, language: str = 'en', units: Literal['standard', 'metric', 'imperial'] = 'standard', mode: Literal['xml', 'html', 'json']='json') -> None:
@@ -238,14 +265,14 @@ class CurrentWeatherAPI(OpenWeatherMapAPI):
             units=self.units,
             mode=self.mode
         )
-        
+
     def get_weather(self) -> str | CurrentWeatherResponse:
         """Fetches the current weather data from the OpenWeatherMap API and returns the response.
-        
+
         Returns a string if the mode is 'html', otherwise returns a `CurrentWeatherResponse` object.
 
         :returns response: The response from the OpenWeatherMap API.
-        
+
         :raises SubscriptionLevelError: If the API key does not have access to the requested data.
         :raises InvalidAPIKeyError: If the API key is invalid.
         :raises NotFoundError: If the location is not found.
@@ -261,26 +288,31 @@ class CurrentWeatherAPI(OpenWeatherMapAPI):
             else:
                 return CurrentWeatherResponse(data.json(), self.mode)
         else:
+            try:
+                error_message = data.json().get('message', data.text)
+            except Exception:
+                error_message = data.text
             match data.status_code:
                 case 400000:
-                    raise SubscriptionLevelError()
+                    raise SubscriptionLevelError(error_message)
                 case 401:
-                    raise InvalidAPIKeyError()
+                    raise InvalidAPIKeyError(error_message)
                 case 404:
-                    raise NotFoundError()
+                    raise NotFoundError(error_message)
                 case 429:
-                    raise TooManyRequestsError()
-                case 500 | 502 | 503 | 504:
-                    raise OpenWeatherMapException()
-                
+                    raise TooManyRequestsError(error_message)
+                case _:
+                    raise OpenWeatherMapException(error_message)
+
 class FiveDayForecast(OpenWeatherMapAPI):
     """Fetches the 5-day / 3-hour weather forecast from OpenWeatherMap."""
-    def __init__(self, api_key: str, location: str | tuple, count: int, language: str = 'en', units: Literal['standard', 'metric', 'imperial'] = 'standard', mode:Literal['json', 'xml']='json') -> None:
+    def __init__(self, api_key: str, location: str | tuple, count: int = -1, language: str = 'en', units: Literal['standard', 'metric', 'imperial'] = 'standard', mode:Literal['json', 'xml']='json') -> None:
         """
         Initializes the FiveDayForecast API wrapper.
 
         :param api_key: Your OpenWeatherMap API key.
         :param location: Location as a string (city name) or a tuple (latitude, longitude).
+        :param count: Number of forecast entries to return. If -1, returns all available entries.
         :param language: Language for the API response (default is 'en').
         :param units: Units for temperature ('standard', 'metric', 'imperial').
         :param mode: Response format ('xml'). If None, defaults to JSON.
@@ -292,6 +324,7 @@ class FiveDayForecast(OpenWeatherMapAPI):
         """
         super().__init__(api_key, location, language, units)
         self.mode = mode
+        self.count = count
         if self.mode not in ['xml', 'json']:
             raise ValueError("Mode must be either 'xml' or 'json'.")
         self.url = "https://api.openweathermap.org/data/2.5/forecast?lat={lat}&lon={lon}&appid={key}&lang={lang}&units={units}&mode={mode}".format(
@@ -302,13 +335,15 @@ class FiveDayForecast(OpenWeatherMapAPI):
             units=self.units,
             mode=self.mode
         )
+        if self.count > 0:
+            self.url += f"&cnt={self.count}"
 
     def get_forecast(self) -> FiveDayForecastResponse:
         """
         Fetches the 5-day / 3-hour weather forecast from the OpenWeatherMap API and returns the response.
 
         :returns response: `FiveDayForecastResponse` object containing the forecast data.
-        
+
         :raises SubscriptionLevelError: If the API key does not have access to the requested data.
         :raises InvalidAPIKeyError: If the API key is invalid.
         :raises NotFoundError: If the location is not found.
@@ -318,22 +353,26 @@ class FiveDayForecast(OpenWeatherMapAPI):
         data = requests.get(self.url)
         if data.status_code == 200:
             if self.mode == 'xml':
-                return CurrentWeatherResponse(data.content, self.mode)
+                return FiveDayForecastResponse(data.content, self.mode)
             else:
-                return CurrentWeatherResponse(data.json(), self.mode)
+                return FiveDayForecastResponse(data.json(), self.mode)
         else:
+            try:
+                error_message = data.json().get('message', data.text)
+            except Exception:
+                error_message = data.text
             match data.status_code:
                 case 400000:
-                    raise SubscriptionLevelError()
+                    raise SubscriptionLevelError(error_message)
                 case 401:
-                    raise InvalidAPIKeyError()
+                    raise InvalidAPIKeyError(error_message)
                 case 404:
-                    raise NotFoundError()
+                    raise NotFoundError(error_message)
                 case 429:
-                    raise TooManyRequestsError()
-                case 500 | 502 | 503 | 504:
-                    raise OpenWeatherMapException()
-                
+                    raise TooManyRequestsError(error_message)
+                case _:
+                    raise OpenWeatherMapException(error_message)
+
 class AirPollutionAPI(OpenWeatherMapAPI):
     """Wrapper for the Air Pollution API from OpenWeatherMap."""
     def __init__(self, api_key: str, location: str | tuple) -> None:
@@ -359,7 +398,7 @@ class AirPollutionAPI(OpenWeatherMapAPI):
         Fetches the current air pollution data from the OpenWeatherMap API and returns the response.
 
         :returns response: `AirPollutionResponse` object containing the air pollution data.
-        
+
         :raises SubscriptionLevelError: If the API key does not have access to the requested data.
         :raises InvalidAPIKeyError: If the API key is invalid.
         :raises NotFoundError: If the location is not found.
@@ -370,24 +409,28 @@ class AirPollutionAPI(OpenWeatherMapAPI):
         if data.status_code == 200:
             return AirPollutionResponse(data.json())
         else:
+            try:
+                error_message = data.json().get('message', data.text)
+            except Exception:
+                error_message = data.text
             match data.status_code:
                 case 400000:
-                    raise SubscriptionLevelError()
+                    raise SubscriptionLevelError(error_message)
                 case 401:
-                    raise InvalidAPIKeyError()
+                    raise InvalidAPIKeyError(error_message)
                 case 404:
-                    raise NotFoundError()
+                    raise NotFoundError(error_message)
                 case 429:
-                    raise TooManyRequestsError()
+                    raise TooManyRequestsError(error_message)
                 case _:
-                    raise OpenWeatherMapException()
-                
+                    raise OpenWeatherMapException(error_message)
+
     def get_air_pollution_forecast(self) -> AirPollutionResponse:
         """
         Fetches the air pollution forecast data from the OpenWeatherMap API and returns the response.
 
         :returns response: `AirPollutionResponse` object containing the air pollution forecast data.
-        
+
         :raises SubscriptionLevelError: If the API key does not have access to the requested data.
         :raises InvalidAPIKeyError: If the API key is invalid.
         :raises NotFoundError: If the location is not found.
@@ -399,27 +442,31 @@ class AirPollutionAPI(OpenWeatherMapAPI):
         if data.status_code == 200:
             return AirPollutionResponse(data.json())
         else:
+            try:
+                error_message = data.json().get('message', data.text)
+            except Exception:
+                error_message = data.text
             match data.status_code:
                 case 400000:
-                    raise SubscriptionLevelError()
+                    raise SubscriptionLevelError(error_message)
                 case 401:
-                    raise InvalidAPIKeyError()
+                    raise InvalidAPIKeyError(error_message)
                 case 404:
-                    raise NotFoundError()
+                    raise NotFoundError(error_message)
                 case 429:
-                    raise TooManyRequestsError()
+                    raise TooManyRequestsError(error_message)
                 case _:
-                    raise OpenWeatherMapException()
-                
+                    raise OpenWeatherMapException(error_message)
+
     def get_air_pollution_history(self, start: int, end: int) -> AirPollutionResponse:
         """
         Fetches the historical air pollution data from the OpenWeatherMap API for a specific time range and returns the response.
 
         :param start: Start timestamp (Unix time) for the historical data.
         :param end: End timestamp (Unix time) for the historical data.
-        
+
         :returns response: `AirPollutionResponse` object containing the historical air pollution data.
-        
+
         :raises SubscriptionLevelError: If the API key does not have access to the requested data.
         :raises InvalidAPIKeyError: If the API key is invalid.
         :raises NotFoundError: If the location is not found.
@@ -431,18 +478,22 @@ class AirPollutionAPI(OpenWeatherMapAPI):
         if data.status_code == 200:
             return AirPollutionResponse(data.json())
         else:
+            try:
+                error_message = data.json().get('message', data.text)
+            except Exception:
+                error_message = data.text
             match data.status_code:
                 case 400000:
-                    raise SubscriptionLevelError()
+                    raise SubscriptionLevelError(error_message)
                 case 401:
-                    raise InvalidAPIKeyError()
+                    raise InvalidAPIKeyError(error_message)
                 case 404:
-                    raise NotFoundError()
+                    raise NotFoundError(error_message)
                 case 429:
-                    raise TooManyRequestsError()
+                    raise TooManyRequestsError(error_message)
                 case _:
-                    raise OpenWeatherMapException()
-                
+                    raise OpenWeatherMapException(error_message)
+
 class GeocodingAPI(OpenWeatherMapAPI):
     """Wrapper for the Geocoding API from OpenWeatherMap."""
     def __init__(self, api_key: str) -> None:
@@ -473,7 +524,7 @@ class GeocodingAPI(OpenWeatherMapAPI):
 
         :returns response: `GeocodingResponse` object containing the geocoding data.
 
-        :raises ValueError: If limit > 5 or limit < 1. 
+        :raises ValueError: If limit > 5 or limit < 1.
         :raises SubscriptionLevelError: If the API key does not have access to the requested data.
         :raises InvalidAPIKeyError: If the API key is invalid.
         :raises NotFoundError: If the location is not found.
@@ -490,18 +541,22 @@ class GeocodingAPI(OpenWeatherMapAPI):
         if data.status_code == 200:
             return GeocodingResponse(data.json())
         else:
+            try:
+                error_message = data.json().get('message', data.text)
+            except Exception:
+                error_message = data.text
             match data.status_code:
                 case 400000:
-                    raise SubscriptionLevelError()
+                    raise SubscriptionLevelError(error_message)
                 case 401:
-                    raise InvalidAPIKeyError()
+                    raise InvalidAPIKeyError(error_message)
                 case 404:
-                    raise NotFoundError()
+                    raise NotFoundError(error_message)
                 case 429:
-                    raise TooManyRequestsError()
+                    raise TooManyRequestsError(error_message)
                 case _:
-                    raise OpenWeatherMapException()
-                
+                    raise OpenWeatherMapException(error_message)
+
     def get_by_zip(self, zip_code: str, country: str) -> GeocodingResponse:
         """
         Fetches the geocoding data for a zip code and country from the OpenWeatherMap API and returns the response.
@@ -517,23 +572,27 @@ class GeocodingAPI(OpenWeatherMapAPI):
         :raises TooManyRequestsError: If the API rate limit is exceeded.
         :raises OpenWeatherMapException: For internal server errors (500, 502, 503, 504).
         """
-        url = f"{self.url}&zip={zip_code},{country}"
+        url = f"{self.url.replace("direct?", "zip?")}&zip={zip_code},{country}"
         data = requests.get(url)
         if data.status_code == 200:
             return GeocodingResponse(data.json())
         else:
+            try:
+                error_message = data.json().get('message', data.text)
+            except Exception:
+                error_message = data.text
             match data.status_code:
                 case 400000:
-                    raise SubscriptionLevelError()
+                    raise SubscriptionLevelError(error_message)
                 case 401:
-                    raise InvalidAPIKeyError()
+                    raise InvalidAPIKeyError(error_message)
                 case 404:
-                    raise NotFoundError()
+                    raise NotFoundError(error_message)
                 case 429:
-                    raise TooManyRequestsError()
+                    raise TooManyRequestsError(error_message)
                 case _:
-                    raise OpenWeatherMapException()
-                
+                    raise OpenWeatherMapException(error_message)
+
     def get_by_coordinates(self, latitude: float, longitude: float, limit=1) -> GeocodingResponse:
         """
         Fetches the geocoding data for a set of coordinates from the OpenWeatherMap API and returns the response.
@@ -562,14 +621,72 @@ class GeocodingAPI(OpenWeatherMapAPI):
         if data.status_code == 200:
             return GeocodingResponse(data.json())
         else:
+            try:
+                error_message = data.json().get('message', data.text)
+            except Exception:
+                error_message = data.text
             match data.status_code:
                 case 400000:
-                    raise SubscriptionLevelError()
+                    raise SubscriptionLevelError(error_message)
                 case 401:
-                    raise InvalidAPIKeyError()
+                    raise InvalidAPIKeyError(error_message)
                 case 404:
-                    raise NotFoundError()
+                    raise NotFoundError(error_message)
                 case 429:
-                    raise TooManyRequestsError()
+                    raise TooManyRequestsError(error_message)
                 case _:
-                    raise OpenWeatherMapException()
+                    raise OpenWeatherMapException(error_message)
+
+class WeatherStationAPI(OpenWeatherMapAPI):
+    """Wrapper for the Weather Station API from OpenWeatherMap."""
+    def __init__(self, api_key: str) -> None:
+        """
+        Initializes the Weather Station API wrapper.
+
+        :param api_key: Your OpenWeatherMap API key.
+
+        :raises ValueError: If the API key is not provided.
+        """
+        if not api_key:
+            raise ValueError("API key must be provided.")
+        super().__init__(api_key, (0.0, 0.0))
+        self.url = "https://api.openweathermap.org/data/3.0/stations?appid={key}".format(
+            key=self.api_key
+        )
+        self.headers = {
+            'Content-Type': 'application/json'
+        }
+
+    def register_station(self, station_data: dict) -> WeatherStation:
+        """
+        Registers a new weather station with the OpenWeatherMap API.
+
+        :param station_data: Dictionary containing the station data.
+
+        :returns response: `WeatherStation` object containing the registered station data.
+
+        :raises SubscriptionLevelError: If the API key does not have access to the requested data.
+        :raises InvalidAPIKeyError: If the API key is invalid.
+        :raises NotFoundError: If the location is not found.
+        :raises TooManyRequestsError: If the API rate limit is exceeded.
+        :raises OpenWeatherMapException: For internal server errors (500, 502, 503, 504).
+        """
+        response = requests.post(self.url, json=station_data, headers=self.headers)
+        if response.status_code == 201:
+            return WeatherStation(response.json())
+        else:
+            try:
+                error_message = response.json().get('message', response.text)
+            except Exception:
+                error_message = response.text
+            match response.status_code:
+                case 400000:
+                    raise SubscriptionLevelError(error_message)
+                case 401:
+                    raise InvalidAPIKeyError(error_message)
+                case 404:
+                    raise NotFoundError(error_message)
+                case 429:
+                    raise TooManyRequestsError(error_message)
+                case _:
+                    raise OpenWeatherMapException(error_message)

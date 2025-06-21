@@ -15,45 +15,45 @@ class OpenWeatherAlert:
         self.end = data.get('end', None)
         self.description = data.get('description', None)
         self.tags = data.get('tags', [])
-    
+
     def get_sender_name(self) -> str | None:
         """Returns the name of the sender of the alert.
-        
+
         :return sender_name: Sender name as a string or None if not available.
         """
         return self.sender_name
-    
+
     def get_event(self) -> str | None:
         """Returns the event type of the alert.
-        
+
         :return event: Event type as a string or None if not available.
         """
         return self.event
-    
+
     def get_start(self) -> int | None:
         """Returns the start time of the alert in Unix timestamp format.
-        
+
         :return start: Start time as an integer (timestamp) or None if not available.
         """
         return self.start
-    
+
     def get_end(self) -> int | None:
         """Returns the end time of the alert in Unix timestamp format.
-        
+
         :return end: End time as an integer (timestamp) or None if not available.
         """
         return self.end
-    
+
     def get_description(self) -> str | None:
         """Returns a description of the alert.
-        
+
         :return description: Description of the alert as a string or None if not available.
         """
         return self.description
-    
+
     def get_tags(self) -> list[str]:
         """Returns a list of tags associated with the alert.
-        
+
         :return tags: List of tags as strings. If no tags are available, returns an empty list.
         """
         return self.tags
@@ -76,7 +76,7 @@ class OneCallResponse:
         :return latitude: Latitude as a float.
         """
         return self.data.get('lat', 0.0)
-    
+
     def get_longitude(self) -> float:
         """
         Returns the longitude from the response data.
@@ -85,7 +85,7 @@ class OneCallResponse:
         :return longitude: Longitude as a float.
         """
         return self.data.get('lon', 0.0)
-    
+
     def get_timezone(self) -> str:
         """
         Returns the timezone from the response data.
@@ -95,7 +95,7 @@ class OneCallResponse:
         :return timezone: Timezone as a string.
         """
         return self.data.get('timezone', 'UTC')
-    
+
     def get_timezone_offset(self) -> int:
         """
         Returns the timezone offset from the response data.
@@ -110,11 +110,11 @@ class OneCallResponse:
         """
         Returns the current time in seconds since the epoch from the response data.
         This is the time of the current weather data.
-        
+
         :return current_time: Current time as an integer (timestamp).
         """
         return self.data.get('current', {}).get('dt', None)
-    
+
     def get_current_sunrise(self) -> int | None:
         """
         Returns the sunrise time in seconds since the epoch from the response data.
@@ -132,7 +132,7 @@ class OneCallResponse:
         :return sunset: Sunset time as an integer (timestamp).
         """
         return self.data.get('current', {}).get('sunset', None)
-    
+
     def get_current_temp(self) -> float | None:
         """
         Returns the current temperature from the response data.
@@ -141,7 +141,7 @@ class OneCallResponse:
         :return temp: Current temperature as a float.
         """
         return self.data.get('current', {}).get('temp', None)
-    
+
     def get_current_feels_like(self) -> float | None:
         """
         Returns the current feels-like temperature from the response data.
@@ -151,16 +151,16 @@ class OneCallResponse:
         :return feels_like: Feels-like temperature as a float.
         """
         return self.data.get('current', {}).get('feels_like', None)
-    
+
     def get_current_pressure(self) -> int:
         """
         Returns the current atmospheric pressure from the response data.
         Pressure is measured in hPa (hectopascals).
-        
+
         :return pressure: Current pressure as an integer.
         """
         return self.data.get('current', {}).get('pressure', None)
-    
+
     def get_current_humidity(self) -> int | None:
         """
         Returns the current humidity in % from the response data.
@@ -168,7 +168,7 @@ class OneCallResponse:
         :return humidity: Current humidity as an integer or None.
         """
         return self.data.get('current', {}).get('humidity', None)
-    
+
     def get_current_dew_point(self) -> float | None:
         """
         Returns the current dew point from the response data.
@@ -176,7 +176,7 @@ class OneCallResponse:
         :return dew_point: Current dew point as a float or None.
         """
         return self.data.get('current', {}).get('dew_point', None)
-    
+
     def get_current_uvi(self) -> float | None:
         """
         Returns the current UV index from the response data.
@@ -184,7 +184,7 @@ class OneCallResponse:
         :return uvi: Current UV index as a float or None.
         """
         return self.data.get('current', {}).get('uvi', None)
-    
+
     def get_current_clouds(self) -> int | None:
         """
         Returns the current cloudiness in % from the response data.
@@ -192,7 +192,7 @@ class OneCallResponse:
         :return clouds: Current cloudiness as an integer or None.
         """
         return self.data.get('current', {}).get('clouds', None)
-    
+
     def get_current_visibility(self) -> int | None:
         """
         Returns the current visibility in km from the response data.
@@ -200,7 +200,7 @@ class OneCallResponse:
         :return visibility: Current visibility as an integer or None.
         """
         return self.data.get('current', {}).get('visibility', None)
-    
+
     def get_current_wind_speed(self) -> float | None:
         """
         Returns the current wind speed from the response data.
@@ -209,7 +209,7 @@ class OneCallResponse:
         :return wind_speed: Current wind speed as a float or None.
         """
         return self.data.get('current', {}).get('wind_speed', None)
-    
+
     def get_current_wind_deg(self) -> int | None:
         """
         Returns the current wind direction in degrees from the response data.
@@ -217,7 +217,7 @@ class OneCallResponse:
         :return wind_deg: Current wind direction as an integer or None.
         """
         return self.data.get('current', {}).get('wind_deg', None)
-    
+
     def get_current_wind_gust(self) -> float | None:
         """
         Returns the current wind gust speed from the response data.
@@ -225,7 +225,7 @@ class OneCallResponse:
         :return wind_gust: Current wind gust as a float or None.
         """
         return self.data.get('current', {}).get('wind_gust', None)
-    
+
     def get_current_weather_id(self) -> int:
         """
         Returns the current weather condition ID from the response data.
@@ -233,7 +233,7 @@ class OneCallResponse:
         :return weather_id: Weather condition ID as an integer.
         """
         return self.data.get('current', {}).get('weather', [{}])[0].get('id', -1)
-    
+
     def get_current_weather_main(self) -> str | None:
         """
         Returns the current weather main description from the response data.
@@ -241,7 +241,7 @@ class OneCallResponse:
         :return weather_main: Weather main as a string or None.
         """
         return self.data.get('current', {}).get('weather', [{}])[0].get('main', None)
-    
+
     def get_current_weather_description(self) -> str | None:
         """
         Returns the current weather description from the response data.
@@ -249,7 +249,7 @@ class OneCallResponse:
         :return weather_description: Weather description as a string or None.
         """
         return self.data.get('current', {}).get('weather', [{}])[0].get('description', None)
-    
+
     def get_current_weather_icon(self) -> str | None:
         """
         Returns the current weather icon code from the response data.
@@ -257,7 +257,7 @@ class OneCallResponse:
         :return weather_icon: Weather icon code as a string or None.
         """
         return self.data.get('current', {}).get('weather', [{}])[0].get('icon', None)
-    
+
     def get_current_rain(self) -> float | None:
         """
         Returns the current rain volume from the response data.
@@ -266,7 +266,7 @@ class OneCallResponse:
         :return rain: Current rain volume as a float or None.
         """
         return self.data.get('current', {}).get('rain', {}).get('1h', None)
-    
+
     def get_current_snow(self) -> float | None:
         """
         Returns the current snow volume from the response data.
@@ -275,7 +275,7 @@ class OneCallResponse:
         :return snow: Current snow volume as a float or None.
         """
         return self.data.get('current', {}).get('snow', {}).get('1h', None)
-    
+
     def get_minutely_times(self) -> list[int | None]:
         """
         Returns a list of timestamps for each minutely forecast entry.
@@ -283,7 +283,7 @@ class OneCallResponse:
         :return minutely_times: List of timestamps (integers).
         """
         return [minute.get('dt', None) for minute in self.data.get('minutely', [])]
-    
+
     def get_minutely_precipitation(self) -> list[float | None]:
         """
         Returns a list of precipitation values for each minutely forecast entry.
@@ -299,7 +299,7 @@ class OneCallResponse:
         :return hourly_times: List of timestamps (integers).
         """
         return [hour.get('dt', None) for hour in self.data.get('hourly', [])]
-    
+
     def get_hourly_temp(self) -> list[float | None]:
         """
         Returns a list of temperatures for each hourly forecast entry.
@@ -307,7 +307,7 @@ class OneCallResponse:
         :return hourly_temp: List of temperatures (floats).
         """
         return [hour.get('temp', None) for hour in self.data.get('hourly', [])]
-    
+
     def get_hourly_feels_like(self) -> list[float | None]:
         """
         Returns a list of feels-like temperatures for each hourly forecast entry.
@@ -315,7 +315,7 @@ class OneCallResponse:
         :return hourly_feels_like: List of feels-like temperatures (floats).
         """
         return [hour.get('feels_like', None) for hour in self.data.get('hourly', [])]
-    
+
     def get_hourly_pressure(self) -> list[int | None]:
         """
         Returns a list of atmospheric pressures for each hourly forecast entry.
@@ -323,7 +323,7 @@ class OneCallResponse:
         :return hourly_pressure: List of pressures (integers).
         """
         return [hour.get('pressure', None) for hour in self.data.get('hourly', [])]
-    
+
     def get_hourly_humidity(self) -> list[int | None]:
         """
         Returns a list of humidity values for each hourly forecast entry.
@@ -331,7 +331,7 @@ class OneCallResponse:
         :return hourly_humidity: List of humidity values (integers).
         """
         return [hour.get('humidity', None) for hour in self.data.get('hourly', [])]
-    
+
     def get_hourly_dew_point(self) -> list[float | None]:
         """
         Returns a list of dew point values for each hourly forecast entry.
@@ -339,7 +339,7 @@ class OneCallResponse:
         :return hourly_dew_point: List of dew point values (floats).
         """
         return [hour.get('dew_point', None) for hour in self.data.get('hourly', [])]
-    
+
     def get_hourly_uvi(self) -> list[float | None]:
         """
         Returns a list of UV index values for each hourly forecast entry.
@@ -347,7 +347,7 @@ class OneCallResponse:
         :return hourly_uvi: List of UV index values (floats).
         """
         return [hour.get('uvi', None) for hour in self.data.get('hourly', [])]
-    
+
     def get_hourly_clouds(self) -> list[int | None]:
         """
         Returns a list of cloudiness values for each hourly forecast entry.
@@ -355,7 +355,7 @@ class OneCallResponse:
         :return hourly_clouds: List of cloudiness values (integers).
         """
         return [hour.get('clouds', None) for hour in self.data.get('hourly', [])]
-    
+
     def get_hourly_visibility(self) -> list[int | None]:
         """
         Returns a list of visibility values for each hourly forecast entry.
@@ -363,7 +363,7 @@ class OneCallResponse:
         :return hourly_visibility: List of visibility values (integers).
         """
         return [hour.get('visibility', None) for hour in self.data.get('hourly', [])]
-    
+
     def get_hourly_wind_speed(self) -> list[float | None]:
         """
         Returns a list of wind speed values for each hourly forecast entry.
@@ -371,7 +371,7 @@ class OneCallResponse:
         :return hourly_wind_speed: List of wind speed values (floats).
         """
         return [hour.get('wind_speed', None) for hour in self.data.get('hourly', [])]
-    
+
     def get_hourly_wind_deg(self) -> list[int | None]:
         """
         Returns a list of wind direction values for each hourly forecast entry.
@@ -379,7 +379,7 @@ class OneCallResponse:
         :return hourly_wind_deg: List of wind direction values (integers).
         """
         return [hour.get('wind_deg', None) for hour in self.data.get('hourly', [])]
-    
+
     def get_hourly_wind_gust(self) -> list[float | None]:
         """
         Returns a list of wind gust values for each hourly forecast entry.
@@ -387,7 +387,7 @@ class OneCallResponse:
         :return hourly_wind_gust: List of wind gust values (floats).
         """
         return [hour.get('wind_gust', None) for hour in self.data.get('hourly', [])]
-    
+
     def get_hourly_pop(self) -> list[float | None]:
         """
         Returns a list of probability of precipitation values for each hourly forecast entry.
@@ -395,7 +395,7 @@ class OneCallResponse:
         :return hourly_pop: List of probability of precipitation values (floats).
         """
         return [hour.get('pop', None) for hour in self.data.get('hourly', [])]
-    
+
     def get_hourly_rain(self) -> list[float | None]:
         """
         Returns a list of rain volume values for each hourly forecast entry.
@@ -403,7 +403,7 @@ class OneCallResponse:
         :return hourly_rain: List of rain volume values (floats).
         """
         return [hour.get('rain', None) for hour in self.data.get('hourly', [])]
-    
+
     def get_hourly_snow(self) -> list[float | None]:
         """
         Returns a list of snow volume values for each hourly forecast entry.
@@ -411,7 +411,7 @@ class OneCallResponse:
         :return hourly_snow: List of snow volume values (floats).
         """
         return [hour.get('snow', None) for hour in self.data.get('hourly', [])]
-    
+
     def get_hourly_weather_id(self) -> list[int]:
         """
         Returns a list of weather condition IDs for each hourly forecast entry.
@@ -419,7 +419,7 @@ class OneCallResponse:
         :return hourly_weather_id: List of weather condition IDs (integers).
         """
         return [hour.get('weather', [{}])[0].get('id', -1) for hour in self.data.get('hourly', [])]
-    
+
     def get_hourly_weather_main(self) -> list[str | None]:
         """
         Returns a list of weather main descriptions for each hourly forecast entry.
@@ -427,7 +427,7 @@ class OneCallResponse:
         :return hourly_weather_main: List of weather main descriptions (strings).
         """
         return [hour.get('weather', [{}])[0].get('main', None) for hour in self.data.get('hourly', [])]
-    
+
     def get_hourly_weather_description(self) -> list[str | None]:
         """
         Returns a list of weather descriptions for each hourly forecast entry.
@@ -435,7 +435,7 @@ class OneCallResponse:
         :return hourly_weather_description: List of weather descriptions (strings).
         """
         return [hour.get('weather', [{}])[0].get('description', None) for hour in self.data.get('hourly', [])]
-    
+
     def get_hourly_weather_icon(self) -> list[str | None]:
         """
         Returns a list of weather icon codes for each hourly forecast entry.
@@ -443,7 +443,7 @@ class OneCallResponse:
         :return hourly_weather_icon: List of weather icon codes (strings).
         """
         return [hour.get('weather', [{}])[0].get('icon', None) for hour in self.data.get('hourly', [])]
-    
+
     def get_daily_times(self) -> list[int | None]:
         """
         Returns a list of timestamps for each daily forecast entry.
@@ -451,7 +451,7 @@ class OneCallResponse:
         :return daily_times: List of timestamps (integers).
         """
         return [day.get('dt', None) for day in self.data.get('daily', [])]
-    
+
     def get_daily_sunrise(self) -> list[int | None]:
         """
         Returns a list of sunrise times for each daily forecast entry.
@@ -459,7 +459,7 @@ class OneCallResponse:
         :return daily_sunrise: List of sunrise times (integers).
         """
         return [day.get('sunrise', None) for day in self.data.get('daily', [])]
-    
+
     def get_daily_sunset(self) -> list[int | None]:
         """
         Returns a list of sunset times for each daily forecast entry.
@@ -467,7 +467,7 @@ class OneCallResponse:
         :return daily_sunset: List of sunset times (integers).
         """
         return [day.get('sunset', None) for day in self.data.get('daily', [])]
-    
+
     def get_daily_moonrise(self) -> list[int | None]:
         """
         Returns a list of moonrise times for each daily forecast entry.
@@ -475,7 +475,7 @@ class OneCallResponse:
         :return daily_moonrise: List of moonrise times (integers).
         """
         return [day.get('moonrise', None) for day in self.data.get('daily', [])]
-    
+
     def get_daily_moonset(self) -> list[int | None]:
         """
         Returns a list of moonset times for each daily forecast entry.
@@ -483,7 +483,7 @@ class OneCallResponse:
         :return daily_moonset: List of moonset times (integers).
         """
         return [day.get('moonset', None) for day in self.data.get('daily', [])]
-    
+
     def get_daily_moon_phase(self) -> list[float | None]:
         """
         Returns a list of moon phase values for each daily forecast entry.
@@ -491,7 +491,7 @@ class OneCallResponse:
         :return daily_moon_phase: List of moon phase values (floats).
         """
         return [day.get('moon_phase', None) for day in self.data.get('daily', [])]
-    
+
     def get_daily_summary(self) -> list[str | None]:
         """
         Returns a list of summary strings for each daily forecast entry.
@@ -499,7 +499,7 @@ class OneCallResponse:
         :return daily_summary: List of summary strings (strings).
         """
         return [day.get('summary', None) for day in self.data.get('daily', [])]
-    
+
     def get_daily_temp_day(self) -> list[float | None]:
         """
         Returns a list of daytime temperatures for each daily forecast entry.
@@ -507,7 +507,7 @@ class OneCallResponse:
         :return daily_temp_day: List of daytime temperatures (floats).
         """
         return [day.get('temp', {}).get('day', None) for day in self.data.get('daily', [])]
-    
+
     def get_daily_temp_min(self) -> list[float | None]:
         """
         Returns a list of minimum temperatures for each daily forecast entry.
@@ -515,7 +515,7 @@ class OneCallResponse:
         :return daily_temp_min: List of minimum temperatures (floats).
         """
         return [day.get('temp', {}).get('min', None) for day in self.data.get('daily', [])]
-    
+
     def get_daily_temp_max(self) -> list[float | None]:
         """
         Returns a list of maximum temperatures for each daily forecast entry.
@@ -523,7 +523,7 @@ class OneCallResponse:
         :return daily_temp_max: List of maximum temperatures (floats).
         """
         return [day.get('temp', {}).get('max', None) for day in self.data.get('daily', [])]
-    
+
     def get_daily_temp_night(self) -> list[float | None]:
         """
         Returns a list of nighttime temperatures for each daily forecast entry.
@@ -531,7 +531,7 @@ class OneCallResponse:
         :return daily_temp_night: List of nighttime temperatures (floats).
         """
         return [day.get('temp', {}).get('night', None) for day in self.data.get('daily', [])]
-    
+
     def get_daily_temp_eve(self) -> list[float | None]:
         """
         Returns a list of evening temperatures for each daily forecast entry.
@@ -539,7 +539,7 @@ class OneCallResponse:
         :return daily_temp_eve: List of evening temperatures (floats).
         """
         return [day.get('temp', {}).get('eve', None) for day in self.data.get('daily', [])]
-    
+
     def get_daily_temp_morning(self) -> list[float | None]:
         """
         Returns a list of morning temperatures for each daily forecast entry.
@@ -547,7 +547,7 @@ class OneCallResponse:
         :return daily_temp_morning: List of morning temperatures (floats).
         """
         return [day.get('temp', {}).get('morn', None) for day in self.data.get('daily', [])]
-    
+
     def get_daily_feels_like_day(self) -> list[float | None]:
         """
         Returns a list of daytime feels-like temperatures for each daily forecast entry.
@@ -555,7 +555,7 @@ class OneCallResponse:
         :return daily_feels_like_day: List of daytime feels-like temperatures (floats).
         """
         return [day.get('feels_like', {}).get('day', None) for day in self.data.get('daily', [])]
-    
+
     def get_daily_feels_like_night(self) -> list[float | None]:
         """
         Returns a list of nighttime feels-like temperatures for each daily forecast entry.
@@ -563,7 +563,7 @@ class OneCallResponse:
         :return daily_feels_like_night: List of nighttime feels-like temperatures (floats).
         """
         return [day.get('feels_like', {}).get('night', None) for day in self.data.get('daily', [])]
-    
+
     def get_daily_feels_like_eve(self) -> list[float | None]:
         """
         Returns a list of evening feels-like temperatures for each daily forecast entry.
@@ -571,7 +571,7 @@ class OneCallResponse:
         :return daily_feels_like_eve: List of evening feels-like temperatures (floats).
         """
         return [day.get('feels_like', {}).get('eve', None) for day in self.data.get('daily', [])]
-    
+
     def get_daily_feels_like_morning(self) -> list[float | None]:
         """
         Returns a list of morning feels-like temperatures for each daily forecast entry.
@@ -579,7 +579,7 @@ class OneCallResponse:
         :return daily_feels_like_morning: List of morning feels-like temperatures (floats).
         """
         return [day.get('feels_like', {}).get('morn', None) for day in self.data.get('daily', [])]
-    
+
     def get_daily_pressure(self) -> list[int | None]:
         """
         Returns a list of atmospheric pressures for each daily forecast entry.
@@ -587,7 +587,7 @@ class OneCallResponse:
         :return daily_pressure: List of pressures (integers).
         """
         return [day.get('pressure', None) for day in self.data.get('daily', [])]
-    
+
     def get_daily_humidity(self) -> list[int | None]:
         """
         Returns a list of humidity values for each daily forecast entry.
@@ -595,7 +595,7 @@ class OneCallResponse:
         :return daily_humidity: List of humidity values (integers).
         """
         return [day.get('humidity', None) for day in self.data.get('daily', [])]
-    
+
     def get_daily_dew_point(self) -> list[float | None]:
         """
         Returns a list of dew point values for each daily forecast entry.
@@ -603,7 +603,7 @@ class OneCallResponse:
         :return daily_dew_point: List of dew point values (floats).
         """
         return [day.get('dew_point', None) for day in self.data.get('daily', [])]
-    
+
     def get_daily_wind_speed(self) -> list[float | None]:
         """
         Returns a list of wind speed values for each daily forecast entry.
@@ -611,7 +611,7 @@ class OneCallResponse:
         :return daily_wind_speed: List of wind speed values (floats).
         """
         return [day.get('wind_speed', None) for day in self.data.get('daily', [])]
-    
+
     def get_daily_wind_deg(self) -> list[int | None]:
         """
         Returns a list of wind direction values for each daily forecast entry.
@@ -627,7 +627,7 @@ class OneCallResponse:
         :return daily_wind_gust: List of wind gust values (floats).
         """
         return [day.get('wind_gust', None) for day in self.data.get('daily', [])]
-    
+
     def get_daily_weather_id(self) -> list[int]:
         """
         Returns a list of weather condition IDs for each daily forecast entry.
@@ -635,7 +635,7 @@ class OneCallResponse:
         :return daily_weather_id: List of weather condition IDs (integers).
         """
         return [day.get('weather', [{}])[0].get('id', -1) for day in self.data.get('daily', [])]
-    
+
     def get_daily_weather_main(self) -> list[str | None]:
         """
         Returns a list of weather main descriptions for each daily forecast entry.
@@ -643,7 +643,7 @@ class OneCallResponse:
         :return daily_weather_main: List of weather main descriptions (strings).
         """
         return [day.get('weather', [{}])[0].get('main', None) for day in self.data.get('daily', [])]
-    
+
     def get_daily_weather_description(self) -> list[str | None]:
         """
         Returns a list of weather descriptions for each daily forecast entry.
@@ -651,7 +651,7 @@ class OneCallResponse:
         :return daily_weather_description: List of weather descriptions (strings).
         """
         return [day.get('weather', [{}])[0].get('description', None) for day in self.data.get('daily', [])]
-    
+
     def get_daily_weather_icon(self) -> list[str | None]:
         """
         Returns a list of weather icon codes for each daily forecast entry.
@@ -659,7 +659,7 @@ class OneCallResponse:
         :return daily_weather_icon: List of weather icon codes (strings).
         """
         return [day.get('weather', [{}])[0].get('icon', None) for day in self.data.get('daily', [])]
-    
+
     def get_daily_pop(self) -> list[float | None]:
         """
         Returns a list of probability of precipitation values for each daily forecast entry.
@@ -667,7 +667,7 @@ class OneCallResponse:
         :return daily_pop: List of probability of precipitation values (floats).
         """
         return [day.get('pop', None) for day in self.data.get('daily', [])]
-    
+
     def get_daily_rain(self) -> list[float | None]:
         """
         Returns a list of rain volume values for each daily forecast entry.
@@ -675,7 +675,7 @@ class OneCallResponse:
         :return daily_rain: List of rain volume values (floats).
         """
         return [day.get('rain', None) for day in self.data.get('daily', [])]
-    
+
     def get_daily_uvi(self) -> list[float | None]:
         """
         Returns a list of UV index values for each daily forecast entry.
@@ -683,7 +683,7 @@ class OneCallResponse:
         :return daily_uvi: List of UV index values (floats).
         """
         return [day.get('uvi', None) for day in self.data.get('daily', [])]
-    
+
     def get_daily_clouds(self) -> list[int | None]:
         """
         Returns a list of cloudiness values for each daily forecast entry.
@@ -691,7 +691,7 @@ class OneCallResponse:
         :return daily_clouds: List of cloudiness values (integers).
         """
         return [day.get('clouds', None) for day in self.data.get('daily', [])]
-    
+
     def get_daily_snow(self) -> list[float | None]:
         """
         Returns a list of snow volume values for each daily forecast entry.
@@ -699,7 +699,7 @@ class OneCallResponse:
         :return daily_snow: List of snow volume values (floats).
         """
         return [day.get('snow', None) for day in self.data.get('daily', [])]
-    
+
     def get_daily_weather_id(self) -> list[int]:
         """
         Returns a list of weather condition IDs for each daily forecast entry.
@@ -707,7 +707,7 @@ class OneCallResponse:
         :return daily_weather_id: List of weather condition IDs (integers).
         """
         return [day.get('weather', [{}])[0].get('id', -1) for day in self.data.get('daily', [])]
-    
+
     def get_daily_weather_main(self) -> list[str | None]:
         """
         Returns a list of weather main descriptions for each daily forecast entry.
@@ -715,7 +715,7 @@ class OneCallResponse:
         :return daily_weather_main: List of weather main descriptions (strings).
         """
         return [day.get('weather', [{}])[0].get('main', None) for day in self.data.get('daily', [])]
-    
+
     def get_daily_weather_description(self) -> list[str | None]:
         """
         Returns a list of weather descriptions for each daily forecast entry.
@@ -723,7 +723,7 @@ class OneCallResponse:
         :return daily_weather_description: List of weather descriptions (strings).
         """
         return [day.get('weather', [{}])[0].get('description', None) for day in self.data.get('daily', [])]
-    
+
     def get_daily_weather_icon(self) -> list[str | None]:
         """
         Returns a list of weather icon codes for each daily forecast entry.
@@ -731,7 +731,7 @@ class OneCallResponse:
         :return daily_weather_icon: List of weather icon codes (strings).
         """
         return [day.get('weather', [{}])[0].get('icon', None) for day in self.data.get('daily', [])]
-    
+
     def get_alerts(self) -> list[OpenWeatherAlert]:
         """
         Returns a list of alerts from the response data.
@@ -751,7 +751,7 @@ class OneCallResponse:
         :return cloud_cover_afternoon: List of cloud cover values (integers).
         """
         return self.data.get('cloud_cover', {}).get('afternoon', [None])
-    
+
     def get_humidity_afternoon(self) -> list[int | None]:
         """
         Returns a list of humidity values for the afternoon period of each daily forecast entry.
@@ -761,7 +761,7 @@ class OneCallResponse:
         :return humidity_afternoon: List of humidity values (integers).
         """
         return self.data.get('humidity', {}).get('afternoon', [None])
-    
+
     def get_total_precipitation(self) -> list[float | None]:
         """
         Returns a list of total precipitation values for each daily forecast entry.
@@ -771,7 +771,7 @@ class OneCallResponse:
         :return total_precipitation: List of total precipitation values (floats).
         """
         return self.data.get('precipitation', {}).get('total', [None])
-    
+
     def get_temperature_min(self) -> list[float | None]:
         """
         Returns a list of minimum temperatures for each daily forecast entry.
@@ -781,7 +781,7 @@ class OneCallResponse:
         :return temperature_min: List of minimum temperatures (floats).
         """
         return self.data.get('temperature', {}).get('min', [None])
-    
+
     def get_temperature_max(self) -> list[float | None]:
         """
         Returns a list of maximum temperatures for each daily forecast entry.
@@ -791,7 +791,7 @@ class OneCallResponse:
         :return temperature_max: List of maximum temperatures (floats).
         """
         return self.data.get('temperature', {}).get('max', [None])
-    
+
     def get_temperature_afternoon(self) -> list[float | None]:
         """
         Returns a list of afternoon temperatures for each daily forecast entry.
@@ -801,7 +801,7 @@ class OneCallResponse:
         :return temperature_afternoon: List of afternoon temperatures (floats).
         """
         return self.data.get('temperature', {}).get('afternoon', [None])
-    
+
     def get_temperature_morning(self) -> list[float | None]:
         """
         Returns a list of morning temperatures for each daily forecast entry.
@@ -811,7 +811,7 @@ class OneCallResponse:
         :return temperature_morning: List of morning temperatures (floats).
         """
         return self.data.get('temperature', {}).get('morning', [None])
-    
+
     def get_temperature_night(self) -> list[float | None]:
         """
         Returns a list of nighttime temperatures for each daily forecast entry.
@@ -821,7 +821,7 @@ class OneCallResponse:
         :return temperature_night: List of nighttime temperatures (floats).
         """
         return self.data.get('temperature', {}).get('night', [None])
-    
+
     def get_temperature_evening(self) -> list[float | None]:
         """
         Returns a list of evening temperatures for each daily forecast entry.
@@ -831,7 +831,7 @@ class OneCallResponse:
         :return temperature_evening: List of evening temperatures (floats).
         """
         return self.data.get('temperature', {}).get('evening', [None])
-    
+
     def get_pressure_afternoon(self) -> list[int | None]:
         """
         Returns a list of atmospheric pressures for each daily forecast entry.
@@ -841,7 +841,7 @@ class OneCallResponse:
         :return pressure_afternoon: List of pressures (integers).
         """
         return self.data.get('pressure', {}).get('afternoon', [None])
-    
+
     def get_wind_max_speed(self) -> list[float | None]:
         """
         Returns a list of maximum wind speeds for each daily forecast entry.
@@ -851,7 +851,7 @@ class OneCallResponse:
         :return wind_max_speed: List of maximum wind speeds (floats).
         """
         return self.data.get('wind', {}).get('max_speed', [None])
-    
+
     def get_wind_max_direction(self) -> list[int | None]:
         """
         Returns a list of maximum wind directions for each daily forecast entry.
@@ -893,7 +893,7 @@ class CurrentWeatherResponse:
             return 0.0
         else:
             return self.data.get('coord', {}).get('lat', 0.0)
-    
+
     def get_longitude(self) -> float:
         """
         Returns the longitude from the response data.
@@ -911,7 +911,7 @@ class CurrentWeatherResponse:
             return 0.0
         else:
             return self.data.get('coord', {}).get('lon', 0.0)
-        
+
     def get_weather_id(self) -> int:
         """
         Returns the weather condition ID from the response data.
@@ -939,7 +939,7 @@ class CurrentWeatherResponse:
             return None
         else:
             return self.data.get('weather', [{}])[0].get('main', None)
-        
+
     def get_weather_description(self) -> str | None:
         """
         Returns the weather description from the response data.
@@ -969,7 +969,7 @@ class CurrentWeatherResponse:
             return None
         else:
             return self.data.get('weather', [{}])[0].get('icon', None)
-    
+
     def get_base(self) -> str | None:
         """
         Returns the base of the weather data from the response data.
@@ -998,7 +998,7 @@ class CurrentWeatherResponse:
             return None
         else:
             return self.data.get('main', {}).get('temp', None)
-        
+
     def get_temperature_unit(self) -> str | None:
         """
         Returns the unit of the temperature from the response data.
@@ -1016,7 +1016,7 @@ class CurrentWeatherResponse:
             return None
         else:
             return None
-        
+
     def get_feels_like(self) -> float | None:
         """
         Returns the feels-like temperature from the response data.
@@ -1050,7 +1050,7 @@ class CurrentWeatherResponse:
             return None
         else:
             return None
-        
+
     def get_pressure(self) -> int | None:
         """
         Returns the atmospheric pressure from the response data.
@@ -1066,7 +1066,7 @@ class CurrentWeatherResponse:
             return None
         else:
             return self.data.get('main', {}).get('pressure', None)
-        
+
     def get_pressure_unit(self) -> str | None:
         """
         Returns the unit of the atmospheric pressure from the response data.
@@ -1084,7 +1084,7 @@ class CurrentWeatherResponse:
             return None
         else:
             return None
-        
+
     def get_humidity(self) -> int | None:
         """
         Returns the humidity from the response data.
@@ -1100,7 +1100,7 @@ class CurrentWeatherResponse:
             return None
         else:
             return self.data.get('main', {}).get('humidity', None)
-        
+
     def get_humidity_unit(self) -> str | None:
         """
         Returns the unit of the humidity from the response data.
@@ -1118,7 +1118,7 @@ class CurrentWeatherResponse:
             return None
         else:
             return None
-        
+
     def get_temperature_min(self) -> float | None:
         """
         Returns the minimum temperature from the response data.
@@ -1134,7 +1134,7 @@ class CurrentWeatherResponse:
             return None
         else:
             return self.data.get('main', {}).get('temp_min', None)
-        
+
     def get_temperature_max(self) -> float | None:
         """
         Returns the maximum temperature from the response data.
@@ -1150,7 +1150,7 @@ class CurrentWeatherResponse:
             return None
         else:
             return self.data.get('main', {}).get('temp_max', None)
-        
+
     def get_sea_level_pressure(self) -> int | None:
         """
         Returns the sea level pressure from the response data.
@@ -1164,7 +1164,7 @@ class CurrentWeatherResponse:
             return None
         else:
             return self.data.get('main', {}).get('sea_level', None)
-        
+
     def get_ground_level_pressure(self) -> int | None:
         """
         Returns the ground level pressure from the response data.
@@ -1178,7 +1178,7 @@ class CurrentWeatherResponse:
             return None
         else:
             return self.data.get('main', {}).get('grnd_level', None)
-        
+
     def get_visibility(self) -> int | None:
         """
         Returns the visibility from the response data.
@@ -1196,7 +1196,7 @@ class CurrentWeatherResponse:
             return None
         else:
             return self.data.get('visibility', None)
-        
+
     def get_wind_speed(self) -> float | None:
         """
         Returns the wind speed from the response data.
@@ -1214,7 +1214,7 @@ class CurrentWeatherResponse:
             return None
         else:
             return self.data.get('wind', {}).get('speed', None)
-        
+
     def get_wind_speed_unit(self) -> str | None:
         """
         Returns the unit of the wind speed from the response data.
@@ -1234,7 +1234,7 @@ class CurrentWeatherResponse:
             return None
         else:
             return None
-        
+
     def get_wind_speed_name(self) -> str | None:
         """
         Returns the name of the wind speed from the response data.
@@ -1272,7 +1272,7 @@ class CurrentWeatherResponse:
             return None
         else:
             return self.data.get('wind', {}).get('deg', None)
-        
+
     def get_wind_direction(self) -> str | None:
         """
         Returns the wind direction as a string from the response data.
@@ -1292,7 +1292,7 @@ class CurrentWeatherResponse:
             return None
         else:
             return None
-        
+
     def get_wind_direction_full(self) -> str | None:
         """
         Returns the full wind direction as a string from the response data.
@@ -1312,7 +1312,7 @@ class CurrentWeatherResponse:
             return None
         else:
             return None
-        
+
     def get_wind_gust(self) -> float | None:
         """
         Returns the wind gust speed from the response data.
@@ -1326,7 +1326,7 @@ class CurrentWeatherResponse:
             return None
         else:
             return self.data.get('wind', {}).get('gust', None)
-        
+
     def get_clouds(self) -> int | None:
         """
         Returns the cloudiness from the response data.
@@ -1342,7 +1342,7 @@ class CurrentWeatherResponse:
             return None
         else:
             return self.data.get('clouds', {}).get('all', None)
-        
+
     def get_clouds_name(self) -> str | None:
         """
         Returns the name of the cloudiness from the response data.
@@ -1360,7 +1360,7 @@ class CurrentWeatherResponse:
             return None
         else:
             return None
-        
+
     def get_rain(self) -> float | None:
         """
         Returns the rain volume from the response data.
@@ -1380,7 +1380,7 @@ class CurrentWeatherResponse:
             return None
         else:
             return self.data.get('rain', {}).get('1h', None)
-        
+
     def get_snow(self) -> float | None:
         """
         Returns the snow volume from the response data.
@@ -1414,7 +1414,7 @@ class CurrentWeatherResponse:
             return None
         else:
             return self.data.get('dt', None)
-        
+
     def get_sys_type(self) -> int | None:
         """
         Returns the system type from the response data.
@@ -1428,7 +1428,7 @@ class CurrentWeatherResponse:
             return None
         else:
             return self.data.get('sys', {}).get('type', None)
-        
+
     def get_sys_id(self) -> int | None:
         """
         Returns the system ID from the response data.
@@ -1442,7 +1442,7 @@ class CurrentWeatherResponse:
             return None
         else:
             return self.data.get('sys', {}).get('id', None)
-        
+
     def get_sys_message(self) -> float | None:
         """
         Returns the system message from the response data.
@@ -1456,7 +1456,7 @@ class CurrentWeatherResponse:
             return None
         else:
             return self.data.get('sys', {}).get('message', None)
-        
+
     def get_country(self) -> str | None:
         """
         Returns the country code from the response data.
@@ -1473,7 +1473,7 @@ class CurrentWeatherResponse:
                 return city.get('country', None)
         else:
             return self.data.get('sys', {}).get('country', None)
-        
+
     def get_sunrise(self) -> int | str| None:
         """
         Returns the sunrise time from the response data.
@@ -1493,7 +1493,7 @@ class CurrentWeatherResponse:
             return None
         else:
             return self.data.get('sys', {}).get('sunrise', None)
-        
+
     def get_sunset(self) -> int | None:
         """
         Returns the sunset time from the response data.
@@ -1513,7 +1513,7 @@ class CurrentWeatherResponse:
             return None
         else:
             return self.data.get('sys', {}).get('sunset', None)
-        
+
     def get_timezone(self) -> int | None:
         """
         Returns the timezone offset from the response data.
@@ -1529,7 +1529,7 @@ class CurrentWeatherResponse:
             return None
         else:
             return self.data.get('timezone', None)
-        
+
     def get_city_id(self) -> int | None:
         """
         Returns the city ID from the response data.
@@ -1545,7 +1545,7 @@ class CurrentWeatherResponse:
             return None
         else:
             return self.data.get('id', None)
-        
+
     def get_city_name(self) -> str | None:
         """
         Returns the city name from the response data.
@@ -1561,7 +1561,7 @@ class CurrentWeatherResponse:
             return None
         else:
             return self.data.get('name', None)
-        
+
     def get_lastupdate(self) -> str | None:
         """
         Returns the last update time from the response data.
@@ -1579,7 +1579,7 @@ class CurrentWeatherResponse:
             return None
         else:
             return None
-        
+
 class FiveDayForecastResponse:
     """A class to handle the response from the OpenWeather 5-Day Forecast API."""
     def __init__(self, data: dict | str, mode: Literal["json", "xml"]='json'):
@@ -1603,7 +1603,7 @@ class FiveDayForecastResponse:
 
         Returns None if the mode is 'xml' since the message is not available in those formats.
 
-        :return message: Message as an integer or None.        
+        :return message: Message as an integer or None.
         """
         if self.mode == 'xml':
             return 0
@@ -1625,7 +1625,7 @@ class FiveDayForecastResponse:
             return 0
         else:
             return self.data.get('cnt', 0)
-        
+
     def get_times(self) -> list[int]:
         """
         Returns the timestamps of the forecast data from the response data.
@@ -1658,7 +1658,7 @@ class FiveDayForecastResponse:
             return temperatures
         else:
             return [entry.get('main', {}).get('temp', 0.0) for entry in self.data.get('list', [])]
-        
+
     def get_temperature_unit(self) -> list[str]:
         """
         Returns the units of the temperature from the response data.
@@ -1700,7 +1700,7 @@ class FiveDayForecastResponse:
             return feels_like_temps
         else:
             return [entry.get('main', {}).get('feels_like', 0.0) for entry in self.data.get('list', [])]
-        
+
     def get_feels_like_unit(self) -> list[str | None]:
         """
         Returns the units of the feels-like temperature from the response data.
@@ -1722,7 +1722,7 @@ class FiveDayForecastResponse:
             return units
         else:
             return []
-        
+
     def get_temperature_min(self) -> list[float]:
         """
         Returns a list of minimum temperatures for each forecast entry.
@@ -1742,7 +1742,7 @@ class FiveDayForecastResponse:
             return min_temps
         else:
             return [entry.get('main', {}).get('temp_min', 0.0) for entry in self.data.get('list', [])]
-        
+
     def get_temperature_max(self) -> list[float]:
         """
         Returns a list of maximum temperatures for each forecast entry.
@@ -1804,7 +1804,7 @@ class FiveDayForecastResponse:
             return units
         else:
             return []
-        
+
     def get_sea_level_pressure(self) -> list[int]:
         """
         Returns a list of sea level pressures for each forecast entry.
@@ -1818,7 +1818,7 @@ class FiveDayForecastResponse:
             return []
         else:
             return [entry.get('main', {}).get('sea_level', 0) for entry in self.data.get('list', [])]
-        
+
     def get_ground_level_pressure(self) -> list[int]:
         """
         Returns a list of ground level pressures for each forecast entry.
@@ -1852,7 +1852,7 @@ class FiveDayForecastResponse:
             return humidities
         else:
             return [entry.get('main', {}).get('humidity', 0) for entry in self.data.get('list', [])]
-        
+
     def get_humidity_unit(self) -> list[str | None]:
         """
         Returns the units of the humidity from the response data.
@@ -1874,7 +1874,7 @@ class FiveDayForecastResponse:
             return units
         else:
             return []
-        
+
     def get_weather_id(self) -> list[int]:
         """
         Returns a list of weather condition IDs for each forecast entry.
@@ -1894,7 +1894,7 @@ class FiveDayForecastResponse:
             return weather_ids
         else:
             return [entry.get('weather', [{}])[0].get('id', -1) for entry in self.data.get('list', [])]
-        
+
     def get_weather_main(self) -> list[str | None]:
         """
         Returns a list of main weather conditions for each forecast entry.
@@ -1908,7 +1908,7 @@ class FiveDayForecastResponse:
             return []
         else:
             return [entry.get('weather', [{}])[0].get('main', None) for entry in self.data.get('list', [])]
-        
+
     def get_weather_description(self) -> list[str | None]:
         """
         Returns a list of weather condition descriptions for each forecast entry.
@@ -1948,7 +1948,7 @@ class FiveDayForecastResponse:
             return weather_icons
         else:
             return [entry.get('weather', [{}])[0].get('icon', None) for entry in self.data.get('list', [])]
-        
+
     def get_clouds(self) -> list[int]:
         """
         Returns a list of cloudiness values for each forecast entry.
@@ -1968,7 +1968,7 @@ class FiveDayForecastResponse:
             return clouds_list
         else:
             return [entry.get('clouds', {}).get('all', 0) for entry in self.data.get('list', [])]
-        
+
     def get_clouds_name(self) -> list[str | None]:
         """
         Returns a list of cloudiness names for each forecast entry.
@@ -1990,7 +1990,7 @@ class FiveDayForecastResponse:
             return clouds_names
         else:
             return []
-    
+
     def get_clouds_unit(self) -> list[str | None]:
         """
         Returns the units of the cloudiness from the response data.
@@ -2012,7 +2012,7 @@ class FiveDayForecastResponse:
             return units
         else:
             return []
-        
+
     def get_wind_speed(self) -> list[float]:
         """
         Returns a list of wind speeds for each forecast entry.
@@ -2032,7 +2032,7 @@ class FiveDayForecastResponse:
             return wind_speeds
         else:
             return [entry.get('wind', {}).get('speed', 0.0) for entry in self.data.get('list', [])]
-        
+
     def get_wind_speed_unit(self) -> list[str | None]:
         """
         Returns the units of the wind speed from the response data.
@@ -2054,7 +2054,7 @@ class FiveDayForecastResponse:
             return units
         else:
             return []
-        
+
     def get_wind_speed_name(self) -> list[str | None]:
         """
         Returns a list of wind speed names for each forecast entry.
@@ -2076,7 +2076,7 @@ class FiveDayForecastResponse:
             return wind_speed_names
         else:
             return []
-        
+
     def get_wind_deg(self) -> list[float]:
         """
         Returns a list of wind degrees for each forecast entry.
@@ -2096,7 +2096,7 @@ class FiveDayForecastResponse:
             return wind_degrees
         else:
             return [entry.get('wind', {}).get('deg', 0.0) for entry in self.data.get('list', [])]
-        
+
     def get_wind_direction(self) -> list[str | None] | None:
         """
         Returns a list of wind directions for each forecast entry.
@@ -2118,7 +2118,7 @@ class FiveDayForecastResponse:
             return wind_directions
         else:
             return []
-        
+
     def get_wind_direction_full(self) -> list[str | None]:
         """
         Returns a list of full wind directions for each forecast entry.
@@ -2140,7 +2140,7 @@ class FiveDayForecastResponse:
             return wind_direction_fulls
         else:
             return []
-        
+
     def get_wind_gust(self) -> list[float]:
         """
         Returns a list of wind gusts for each forecast entry.
@@ -2160,7 +2160,7 @@ class FiveDayForecastResponse:
             return wind_gusts
         else:
             return [entry.get('wind', {}).get('gust', 0.0) for entry in self.data.get('list', [])]
-        
+
     def get_wind_gust_unit(self) -> list[str | None]:
         """
         Returns the units of the wind gust from the response data.
@@ -2182,7 +2182,7 @@ class FiveDayForecastResponse:
             return units
         else:
             return []
-        
+
     def get_visibility(self) -> list[int]:
         """
         Returns a list of visibility values for each forecast entry.
@@ -2202,7 +2202,7 @@ class FiveDayForecastResponse:
             return visibilities
         else:
             return [entry.get('visibility', 0) for entry in self.data.get('list', [])]
-        
+
     def get_pop(self) -> list[float]:
         """
         Returns a list of probability of precipitation (POP) values for each forecast entry.
@@ -2222,7 +2222,7 @@ class FiveDayForecastResponse:
             return pops
         else:
             return [entry.get('pop', 0.0) for entry in self.data.get('list', [])]
-        
+
     def get_rain(self) -> list[float]:
         """
         Returns a list of rain volume for each forecast entry.
@@ -2245,7 +2245,7 @@ class FiveDayForecastResponse:
             return rains
         else:
             return [entry.get('rain', {}).get('3h', 0.0) for entry in self.data.get('list', [])]
-        
+
     def get_snow(self) -> list[float]:
         """
         Returns a list of snow volume for each forecast entry.
@@ -2268,7 +2268,7 @@ class FiveDayForecastResponse:
             return snows
         else:
             return [entry.get('snow', {}).get('3h', 0.0) for entry in self.data.get('list', [])]
-        
+
     def get_part_of_day(self) -> list[str | None]:
         """
         Returns a list of part of day for each forecast entry.
@@ -2282,7 +2282,7 @@ class FiveDayForecastResponse:
             return []
         else:
             return [entry.get('sys', {}).get('pod', None) for entry in self.data.get('list', [])]
-        
+
     def get_city_id(self) -> int:
         """
         Returns the city ID from the response data.
@@ -2296,7 +2296,7 @@ class FiveDayForecastResponse:
             return -1
         else:
             return self.data.get('city', {}).get('id', -1)
-        
+
     def get_city_name(self) -> str | None:
         """
         Returns the city name from the response data.
@@ -2311,7 +2311,7 @@ class FiveDayForecastResponse:
                 return location.get('name', None)
         else:
             return self.data.get('city', {}).get('name', None)
-        
+
     def get_latitude(self) -> float | None:
         """
         Returns the latitude of the city from the response data.
@@ -2329,7 +2329,7 @@ class FiveDayForecastResponse:
             return None
         else:
             return self.data.get('city', {}).get('coord', {}).get('lat', 0.0)
-        
+
     def get_longitude(self) -> float | None:
         """
         Returns the longitude of the city from the response data.
@@ -2347,7 +2347,7 @@ class FiveDayForecastResponse:
             return None
         else:
             return self.data.get('city', {}).get('coord', {}).get('lon', 0.0)
-        
+
     def get_country(self) -> str | None:
         """
         Returns the country code from the response data.
@@ -2363,7 +2363,7 @@ class FiveDayForecastResponse:
             return None
         else:
             return self.data.get('city', {}).get('country', None)
-        
+
     def get_population(self) -> int:
         """
         Returns the population of the city from the response data.
@@ -2377,7 +2377,7 @@ class FiveDayForecastResponse:
             return -1
         else:
             return self.data.get('city', {}).get('population', -1)
-        
+
     def get_timezone(self) -> int:
         """
         Returns the timezone offset from the response data.
@@ -2393,7 +2393,7 @@ class FiveDayForecastResponse:
             return -1
         else:
             return self.data.get('city', {}).get('timezone', -1)
-        
+
     def get_sunrise(self) -> int:
         """
         Returns the sunrise time from the response data.
@@ -2409,7 +2409,7 @@ class FiveDayForecastResponse:
             return -1
         else:
             return self.data.get('city', {}).get('sunrise', -1)
-        
+
     def get_sunset(self) -> int:
         """
         Returns the sunset time from the response data.
@@ -2445,7 +2445,7 @@ class FiveDayForecastResponse:
             return -1.0
         else:
             return -1.0
-        
+
     def get_geobase(self) -> str | None:
         """
         Returns the geobase of the city from the response data.
@@ -2465,7 +2465,7 @@ class FiveDayForecastResponse:
             return None
         else:
             return None
-        
+
     def get_geobase_id(self) -> int:
         """
         Returns the geobase ID of the city from the response data.
@@ -2485,14 +2485,14 @@ class FiveDayForecastResponse:
             return -1
         else:
             return -1
-        
+
     def get_lastupdate(self) -> int:
         """
         Returns the last update time from the response data.
         The last update time is typically represented as a Unix timestamp (seconds since epoch).
 
         Returns -1 if the mode is 'json' since last update time is not available in those formats.
-        
+
         :return last_update: Last update time as an integer (Unix timestamp).
         """
         if self.mode == 'xml':
@@ -2503,7 +2503,7 @@ class FiveDayForecastResponse:
             return -1
         else:
             return -1
-        
+
     def get_calctime(self) -> int:
         """
         Returns the calculation time from the response data.
@@ -2539,13 +2539,13 @@ class FiveDayForecastResponse:
             return -1
         else:
             return -1
-        
+
 class AirPollutionResponse:
     """
     Class to handle the response data for air pollution information.
     It provides methods to extract various air quality parameters from the response data.
     """
-    
+
     def __init__(self, data: dict):
         """
         Initializes the AirPollutionResponse with the provided data and mode.
@@ -2572,7 +2572,7 @@ class AirPollutionResponse:
         :return times: List of timestamps (integers).
         """
         return [entry.get('dt', 0) for entry in self.data.get('list', [])]
-    
+
     def get_aqi(self) -> list[int]:
         """
         Returns a list of Air Quality Index (AQI) values for the air pollution data.
@@ -2581,7 +2581,7 @@ class AirPollutionResponse:
         :return aqi: List of AQI values (integers).
         """
         return [entry.get('main', {}).get('aqi', 0) for entry in self.data.get('list', [])]
-    
+
     def get_carbon_monoxide(self) -> list[float]:
         """
         Returns a list of carbon monoxide (CO) levels for the air pollution data.
@@ -2590,7 +2590,7 @@ class AirPollutionResponse:
         :return carbon_monoxide: List of CO levels (floats).
         """
         return [entry.get('components', {}).get('co', 0.0) for entry in self.data.get('list', [])]
-    
+
     def get_nitrogen_monoxide(self) -> list[float]:
         """
         Returns a list of nitrogen monoxide (NO) levels for the air pollution data.
@@ -2608,7 +2608,7 @@ class AirPollutionResponse:
         :return nitrogen_dioxide: List of NO₂ levels (floats).
         """
         return [entry.get('components', {}).get('no2', 0.0) for entry in self.data.get('list', [])]
-    
+
     def get_ozone(self) -> list[float]:
         """
         Returns a list of ozone (O₃) levels for the air pollution data.
@@ -2617,7 +2617,7 @@ class AirPollutionResponse:
         :return ozone: List of O₃ levels (floats).
         """
         return [entry.get('components', {}).get('o3', 0.0) for entry in self.data.get('list', [])]
-    
+
     def get_sulphur_dioxide(self) -> list[float]:
         """
         Returns a list of sulphur dioxide (SO₂) levels for the air pollution data.
@@ -2626,7 +2626,7 @@ class AirPollutionResponse:
         :return sulphur_dioxide: List of SO₂ levels (floats).
         """
         return [entry.get('components', {}).get('so2', 0.0) for entry in self.data.get('list', [])]
-    
+
     def get_pm2_5(self) -> list[float]:
         """
         Returns a list of PM2.5 (particulate matter with a diameter of less than 2.5 micrometers) levels for the air pollution data.
@@ -2635,7 +2635,7 @@ class AirPollutionResponse:
         :return pm2_5: List of PM2.5 levels (floats).
         """
         return [entry.get('components', {}).get('pm2_5', 0.0) for entry in self.data.get('list', [])]
-    
+
     def get_pm10(self) -> list[float]:
         """
         Returns a list of PM10 (particulate matter with a diameter of less than 10 micrometers) levels for the air pollution data.
@@ -2659,8 +2659,8 @@ class GeocodingResponse:
     Class to handle the response data for geocoding information.
     It provides methods to extract various geocoding parameters from the response data.
     """
-    
-    def __init__(self, data: dict):
+
+    def __init__(self, data: dict | list[dict]) -> None:
         """
         Initializes the GeocodingResponse with the provided data.
 
@@ -2668,64 +2668,283 @@ class GeocodingResponse:
         """
         self.data = data
 
-    def get_name(self) -> str | None:
+    def get_name(self) -> list[str | None] | str | None:
         """
         Returns the name of the location from the response data.
         The name is typically a string representing the name of the location.
 
         :return name: Location name as a string or None.
         """
-        return self.data.get('name', None)
-    
-    def get_local_names(self) -> dict[str, str | None]:
+        if isinstance(self.data, list):
+            return [entry.get('name', None) for entry in self.data]
+        else:
+            return self.data.get('name', None)
+
+    def get_local_names(self) -> list[dict[str, str]] | dict[str, str]:
         """
         Returns a dictionary of local names for the location from the response data.
         Local names are typically represented as a dictionary with language codes as keys and names as values.
 
         :return local_names: Dictionary of local names (language code: name).
         """
-        return self.data.get('local_names', {})
-    
-    def get_latitude(self) -> float:
+        if isinstance(self.data, list):
+            return [entry.get('local_names', {}) for entry in self.data]
+        else:
+            return self.data.get('local_names', {})
+
+    def get_latitude(self) -> list[float] | float:
         """
         Returns the latitude of the location from the response data.
         Latitude is typically a float representing the geographical coordinate.
 
         :return latitude: Latitude as a float.
         """
-        return self.data.get('lat', 0.0)
-    
-    def get_longitude(self) -> float:
+        if isinstance(self.data, list):
+            return [entry.get('lat', 0.0) for entry in self.data]
+        else:
+            return self.data.get('lat', 0.0)
+
+    def get_longitude(self) -> list[float] | float:
         """
         Returns the longitude of the location from the response data.
         Longitude is typically a float representing the geographical coordinate.
 
         :return longitude: Longitude as a float.
         """
-        return self.data.get('lon', 0.0)
-    
-    def get_country(self) -> str | None:
+        if isinstance(self.data, list):
+            return [entry.get('lon', 0.0) for entry in self.data]
+        else:
+            return self.data.get('lon', 0.0)
+
+    def get_country(self) -> list[str | None] | str | None:
         """
         Returns the country code from the response data.
         The country code is typically a string representing the ISO 3166-1 alpha-2 code of the country.
 
         :return country: Country code as a string or None.
         """
-        return self.data.get('country', None)
-    
-    def get_state(self) -> str | None:
+        if isinstance(self.data, list):
+            return [entry.get('country', None) for entry in self.data]
+        else:
+            return self.data.get('country', None)
+
+    def get_state(self) -> list[str | None] | str | None:
         """
         Returns the state or region from the response data.
         The state is typically a string representing the name of the state or region.
 
         :return state: State or region as a string or None.
         """
-        return self.data.get('state', None)
-    
+        if isinstance(self.data, list):
+            return [entry.get('state', None) for entry in self.data]
+        else:
+            return self.data.get('state', None)
+
     def get_zip(self) -> str | None:
         """
         Returns the zip code specified in the API request.
-        
+
         :return zip: Zip code as a string or None.
         """
+        if isinstance(self.data, list):
+            return None
         return self.data.get('zip', None)
+
+
+class WeatherStationMeasurements:
+    """
+    Class to represent measurements from a weather station.
+    It provides methods to extract various measurement parameters from the response data.
+    """
+
+    def __init__(self, data: list[dict]):
+        """
+        Initializes the WeatherStationMeasurements with the provided data.
+
+        :param data: The response data as a dict.
+        """
+        self.data = data
+
+    def get_station_id(self) -> list[int]:
+        """
+        Returns the ID of the weather station from the response data.
+        The ID is typically an integer representing the unique identifier of the weather station.
+
+        :return station_id: Weather station ID as an integer.
+        """
+        return [entry.get('station_id', 0) for entry in self.data]
+
+    def get_types(self) -> list[str | None]:
+        """
+        Returns a list of measurement types for each entry in the response data.
+        The measurement type is typically represented as a string (e.g., 'temperature', 'humidity').
+
+        :return types: List of measurement types (strings).
+        """
+        return [entry.get('type', None) for entry in self.data]
+
+    def get_times(self) -> list[int]:
+        """
+        Returns the time of the measurement from the response data.
+        The time is typically represented as a Unix timestamp (seconds since epoch).
+
+        :return time: Measurement time as an integer (Unix timestamp).
+        """
+        return [entry.get('date', 0) for entry in self.data]
+
+    def get_temperatures_max(self) -> list[float]:
+        """
+        Returns a list of maximum temperatures for each measurement entry.
+        The maximum temperature is typically measured in degrees Celsius (°C).
+
+        :return max_temperatures: List of maximum temperatures (floats).
+        """
+        return [entry.get('temp', {}).get('max', 0.0) for entry in self.data]
+
+    def get_temperatures_min(self) -> list[float]:
+        """
+        Returns a list of minimum temperatures for each measurement entry.
+        The minimum temperature is typically measured in degrees Celsius (°C).
+
+        :return min_temperatures: List of minimum temperatures (floats).
+        """
+        return [entry.get('temp', {}).get('min', 0.0) for entry in self.data]
+
+    def get_temperatures_average(self) -> list[float]:
+        """
+        Returns a list of average temperatures for each measurement entry.
+        The average temperature is typically measured in degrees Celsius (°C).
+
+        :return average_temperatures: List of average temperatures (floats).
+        """
+        return [entry.get('temp', {}).get('average', 0.0) for entry in self.data]
+
+    def get_temperatures_weight(self) -> list[int]:
+        """
+        Returns a list of temperature weights for each measurement entry.
+        The temperature weight is typically an integer representing the weight of the temperature measurement.
+
+        :return temperature_weights: List of temperature weights (integers).
+        """
+        return [entry.get('temp', {}).get('weight', 0) for entry in self.data]
+
+    def get_humidity(self) -> list[float]:
+        """
+        Returns a list of humidity values for each measurement entry.
+        Humidity is typically measured as a percentage (0-100%).
+
+        :return humidity: List of humidity values (integers).
+        """
+        return [entry.get('humidity', {}).get('average', 0.0) for entry in self.data]
+
+    def get_humidity_weight(self) -> list[int]:
+        """
+        Returns a list of humidity weights for each measurement entry.
+        The humidity weight is typically an integer representing the weight of the humidity measurement.
+
+        :return humidity_weights: List of humidity weights (integers).
+        """
+        return [entry.get('humidity', {}).get('weight', 0) for entry in self.data]
+
+class WeatherStation:
+    """
+    Class to represent a weather station.
+    It provides methods to extract various weather station parameters from the response data.
+    """
+    def __init__(self, data: dict):
+        """
+        Initializes the WeatherStation with the provided data.
+
+        :param data: The response data as a dict.
+        """
+        self.data = data
+
+    def get_id(self) -> int:
+        """
+        Returns the ID of the weather station from the response data.
+        The ID is typically an integer representing the unique identifier of the weather station.
+
+        :return id: Weather station ID as an integer.
+        """
+        return self.data.get('ID', 0)
+
+    def get_name(self) -> str | None:
+        """
+        Returns the name of the weather station from the response data.
+        The name is typically a string representing the name of the weather station.
+
+        :return name: Weather station name as a string or None.
+        """
+        return self.data.get('name', None)
+
+    def get_latitude(self) -> float:
+        """
+        Returns the latitude of the weather station from the response data.
+        Latitude is typically a float representing the geographical coordinate.
+
+        :return latitude: Latitude as a float.
+        """
+        return self.data.get('latitude', 0.0)
+
+    def get_longitude(self) -> float:
+        """
+        Returns the longitude of the weather station from the response data.
+        Longitude is typically a float representing the geographical coordinate.
+
+        :return longitude: Longitude as a float.
+        """
+        return self.data.get('longitude', 0.0)
+
+    def get_altitude(self) -> float:
+        """
+        Returns the altitude of the weather station from the response data.
+        The altitude is typically a float representing the height above sea level in meters.
+
+        :return altitude: Altitude as a float.
+        """
+        return self.data.get('altitude', 0.0)
+
+    def get_updated_at(self) -> str | None:
+        """
+        Returns the last updated time of the weather station from the response data.
+        The last updated time is typically a string representing the date and time of the last update.
+
+        :return updated_at: Last updated time as a string or None.
+        """
+        return self.data.get('updated_at', None)
+
+    def get_created_at(self) -> str | None:
+        """
+        Returns the creation time of the weather station from the response data.
+        The creation time is typically a string representing the date and time of the creation.
+
+        :return created_at: Creation time as a string or None.
+        """
+        return self.data.get('created_at', None)
+
+    def get_user_id(self) -> str | None:
+        """
+        Returns the user ID associated with the weather station from the response data.
+        The user ID is typically a string representing the unique identifier of the user.
+
+        :return user_id: User ID as a string or None.
+        """
+        return self.data.get('user_id', None)
+
+    def get_source_type(self) -> int:
+        """
+        Returns the source type of the weather station from the response data.
+        The source type is typically an integer representing the type of data source (e.g., 1 for manual, 2 for automatic).
+
+        :return source_type: Source type as an integer.
+        """
+        return self.data.get('source_type', 0)
+
+    def get_measurements(self) -> WeatherStationMeasurements:
+        """
+        Returns the measurements associated with the weather station from the response data.
+        The measurements are typically represented as a list of dictionaries containing various measurement parameters.
+
+        :return measurements: :class:`WeatherStationMeasurements` object containing the measurements.
+        """
+        pass
