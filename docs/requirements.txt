@@ -5,3 +5,4 @@ sphinx-autodoc-typehints==3.2.0
 sphinx-rtd-theme==3.0.2
 requests==2.32.3
 geopy==2.4.1
+aiohttp==3.12.13

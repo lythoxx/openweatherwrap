@@ -12,8 +12,11 @@ classifiers = [
 ]
 dependencies = [
     "requests",
-    "geopy"
+    "geopy",
+    "aiohttp"
 ]
+
+license = { text = "Attribution-ShareAlike 4.0 International" }
 
 [build-system]
 requires = ["flit_core<4"]
@@ -21,3 +24,4 @@ build-backend = "flit_core.buildapi"
 
 [project.urls]
 Home = "https://lxio.dev"
+Repository = "https://github.com/lythoxx/openweatherwrap"

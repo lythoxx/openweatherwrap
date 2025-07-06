@@ -742,125 +742,312 @@ class OneCallResponse:
         return [OpenWeatherAlert(alert) for alert in alerts_data] if alerts_data else []
 
     # Related to daily aggregation
-    def get_cloud_cover_afternoon(self) -> list[int | None]:
+    def get_cloud_cover_afternoon(self) -> int:
         """
         Returns a list of cloud cover values for the afternoon period of each daily forecast entry.
 
         This is used in Daily Aggregation data.
 
-        :return cloud_cover_afternoon: List of cloud cover values (integers).
+        :return cloud_cover_afternoon: The cloud coverage.
         """
-        return self.data.get('cloud_cover', {}).get('afternoon', [None])
+        return self.data.get('cloud_cover', {}).get('afternoon', -1)
 
-    def get_humidity_afternoon(self) -> list[int | None]:
+    def get_humidity_afternoon(self) -> int:
         """
         Returns a list of humidity values for the afternoon period of each daily forecast entry.
 
         This is used in Daily Aggregation data.
 
-        :return humidity_afternoon: List of humidity values (integers).
+        :return humidity_afternoon: The humidity.
         """
-        return self.data.get('humidity', {}).get('afternoon', [None])
+        return self.data.get('humidity', {}).get('afternoon', -1)
 
-    def get_total_precipitation(self) -> list[float | None]:
+    def get_total_precipitation(self) -> float:
         """
         Returns a list of total precipitation values for each daily forecast entry.
 
         This is used in Daily Aggregation data.
 
-        :return total_precipitation: List of total precipitation values (floats).
+        :return total_precipitation: The total precipitation.
         """
-        return self.data.get('precipitation', {}).get('total', [None])
+        return self.data.get('precipitation', {}).get('total', -1.0)
 
-    def get_temperature_min(self) -> list[float | None]:
+    def get_temperature_min(self) -> float:
         """
         Returns a list of minimum temperatures for each daily forecast entry.
 
         This is used in Daily Aggregation data.
 
-        :return temperature_min: List of minimum temperatures (floats).
+        :return temperature_min: The minimum temperature.
         """
-        return self.data.get('temperature', {}).get('min', [None])
+        return self.data.get('temperature', {}).get('min', -1.0)
 
-    def get_temperature_max(self) -> list[float | None]:
+    def get_temperature_max(self) -> float:
         """
         Returns a list of maximum temperatures for each daily forecast entry.
 
         This is used in Daily Aggregation data.
 
-        :return temperature_max: List of maximum temperatures (floats).
+        :return temperature_max: The maximum themperature.
         """
-        return self.data.get('temperature', {}).get('max', [None])
+        return self.data.get('temperature', {}).get('max', -1.0)
 
-    def get_temperature_afternoon(self) -> list[float | None]:
+    def get_temperature_afternoon(self) -> float:
         """
         Returns a list of afternoon temperatures for each daily forecast entry.
 
         This is used in Daily Aggregation data.
 
-        :return temperature_afternoon: List of afternoon temperatures (floats).
+        :return temperature_afternoon: The temperature in the afternoon.
         """
-        return self.data.get('temperature', {}).get('afternoon', [None])
+        return self.data.get('temperature', {}).get('afternoon', -1.0)
 
-    def get_temperature_morning(self) -> list[float | None]:
+    def get_temperature_morning(self) -> float:
         """
         Returns a list of morning temperatures for each daily forecast entry.
 
         This is used in Daily Aggregation data.
 
-        :return temperature_morning: List of morning temperatures (floats).
+        :return temperature_morning: The temperature in the morning.
         """
-        return self.data.get('temperature', {}).get('morning', [None])
+        return self.data.get('temperature', {}).get('morning', -1.0)
 
-    def get_temperature_night(self) -> list[float | None]:
+    def get_temperature_night(self) -> float:
         """
         Returns a list of nighttime temperatures for each daily forecast entry.
 
         This is used in Daily Aggregation data.
 
-        :return temperature_night: List of nighttime temperatures (floats).
+        :return temperature_night: The temperature at night.
         """
-        return self.data.get('temperature', {}).get('night', [None])
+        return self.data.get('temperature', {}).get('night', -1.0)
 
-    def get_temperature_evening(self) -> list[float | None]:
+    def get_temperature_evening(self) -> float:
         """
         Returns a list of evening temperatures for each daily forecast entry.
 
         This is used in Daily Aggregation data.
 
-        :return temperature_evening: List of evening temperatures (floats).
+        :return temperature_evening: The temperature in the evening.
         """
-        return self.data.get('temperature', {}).get('evening', [None])
+        return self.data.get('temperature', {}).get('evening', -1.0)
 
-    def get_pressure_afternoon(self) -> list[int | None]:
+    def get_pressure_afternoon(self) -> int:
         """
         Returns a list of atmospheric pressures for each daily forecast entry.
 
         This is used in Daily Aggregation data.
 
-        :return pressure_afternoon: List of pressures (integers).
+        :return pressure_afternoon: The pressure for the afternoon.
         """
-        return self.data.get('pressure', {}).get('afternoon', [None])
+        return self.data.get('pressure', {}).get('afternoon', -1)
 
-    def get_wind_max_speed(self) -> list[float | None]:
+    def get_wind_max_speed(self) -> float:
         """
         Returns a list of maximum wind speeds for each daily forecast entry.
 
         This is used in Daily Aggregation data.
 
-        :return wind_max_speed: List of maximum wind speeds (floats).
+        :return wind_max_speed: The maximum wind speed.
         """
-        return self.data.get('wind', {}).get('max_speed', [None])
+        return self.data.get('wind', {}).get('max', {}).get('speed', -1.0)
 
-    def get_wind_max_direction(self) -> list[int | None]:
+    def get_wind_max_direction(self) -> int:
         """
         Returns a list of maximum wind directions for each daily forecast entry.
 
         This is used in Daily Aggregation data.
 
-        :return wind_max_direction: List of maximum wind directions (integers).
+        :return wind_max_direction: The maximum wind direction.
         """
-        return self.data.get('wind', {}).get('max_direction', [None])
+        return self.data.get('wind', {}).get('max', {}).get('direction', -1)
+
+    def get_time(self) -> int:
+        """
+        Returns the time of the response data.
+
+        This is used in Timestamped data.
+
+        Returns:
+            int: The time of the response data as a timestamp.
+        """
+        return self.data.get('data', [{}])[0].get('dt', -1)
+
+    def get_sunrise(self) -> int:
+        """
+        Returns the sunrise time from the response data.
+
+        This is used in Timestamped data.
+
+        Returns:
+            int: The sunrise time as a timestamp.
+        """
+        return self.data.get('data', [{}])[0].get('sunrise', -1)
+
+    def get_sunset(self) -> int:
+        """
+        Returns the sunset time from the response data.
+
+        This is used in Timestamped data.
+
+        Returns:
+            int: The sunset time as a timestamp.
+        """
+        return self.data.get('data', [{}])[0].get('sunset', -1)
+
+    def get_temperature(self) -> float:
+        """
+        Returns the temperature from the response data.
+
+        This is used in Timestamped data.
+
+        Returns:
+            float: The temperature as a float.
+        """
+        return self.data.get('data', [{}])[0].get('temp', -1.0)
+
+    def get_feels_like(self) -> float:
+        """
+        Returns the feels-like temperature from the response data.
+
+        This is used in Timestamped data.
+
+        Returns:
+            float: The feels-like temperature as a float.
+        """
+        return self.data.get('data', [{}])[0].get('feels_like', -1.0)
+
+    def get_pressure(self) -> int:
+        """
+        Returns the atmospheric pressure from the response data.
+
+        This is used in Timestamped data.
+
+        Returns:
+            int: The atmospheric pressure as an integer.
+        """
+        return self.data.get('data', [{}])[0].get('pressure', -1)
+
+    def get_humidity(self) -> int:
+        """
+        Returns the humidity from the response data.
+
+        This is used in Timestamped data.
+
+        Returns:
+            int: The humidity as an integer.
+        """
+        return self.data.get('data', [{}])[0].get('humidity', -1)
+
+    def get_dew_point(self) -> float:
+        """
+        Returns the dew point from the response data.
+
+        This is used in Timestamped data.
+
+        Returns:
+            float: The dew point as a float.
+        """
+        return self.data.get('data', [{}])[0].get('dew_point', -1.0)
+
+    def get_uvi(self) -> float:
+        """
+        Returns the UV index from the response data.
+
+        This is used in Timestamped data.
+
+        Returns:
+            float: The UV index as a float.
+        """
+        return self.data.get('data', [{}])[0].get('uvi', -1.0)
+
+    def get_clouds(self) -> int:
+        """
+        Returns the cloudiness from the response data.
+
+        This is used in Timestamped data.
+
+        Returns:
+            int: The cloudiness as an integer.
+        """
+        return self.data.get('data', [{}])[0].get('clouds', -1)
+
+    def get_visibility(self) -> int:
+        """
+        Returns the visibility from the response data.
+
+        This is used in Timestamped data.
+
+        Returns:
+            int: The visibility as an integer.
+        """
+        return self.data.get('data', [{}])[0].get('visibility', -1)
+
+    def get_wind_speed(self) -> float:
+        """
+        Returns the wind speed from the response data.
+
+        This is used in Timestamped data.
+
+        Returns:
+            float: The wind speed as a float.
+        """
+        return self.data.get('data', [{}])[0].get('wind_speed', -1.0)
+
+    def get_wind_deg(self) -> int:
+        """
+        Returns the wind direction in degrees from the response data.
+
+        This is used in Timestamped data.
+
+        Returns:
+            int: The wind direction as an integer.
+        """
+        return self.data.get('data', [{}])[0].get('wind_deg', -1)
+
+    def get_weather_id(self) -> int:
+        """
+        Returns the weather condition ID from the response data.
+
+        This is used in Timestamped data.
+
+        Returns:
+            int: The weather condition ID as an integer.
+        """
+        return self.data.get('data', [{}])[0].get('weather', [{}])[0].get('id', -1)
+
+    def get_weather_main(self) -> str | None:
+        """
+        Returns the main weather description from the response data.
+
+        This is used in Timestamped data.
+
+        Returns:
+            str | None: The main weather description as a string or None.
+        """
+        return self.data.get('data', [{}])[0].get('weather', [{}])[0].get('main', None)
+
+    def get_weather_description(self) -> str | None:
+        """
+        Returns the weather description from the response data.
+
+        This is used in Timestamped data.
+
+        Returns:
+            str | None: The weather description as a string or None.
+        """
+        return self.data.get('data', [{}])[0].get('weather', [{}])[0].get('description', None)
+
+    def get_weather_icon(self) -> str | None:
+        """
+        Returns the weather icon code from the response data.
+cha
+        This is used in Timestamped data.
+
+        Returns:
+            str | None: The weather icon code as a string or None.
+        """
+        return self.data.get('data', [{}])[0].get('weather', [{}])[0].get('icon', None)
 
 class CurrentWeatherResponse:
     """A class to handle the response from the OpenWeather Current Weather API."""
@@ -1649,7 +1836,8 @@ class FiveDayForecastResponse:
         if self.mode == 'xml':
             root = ET.fromstring(self.data)
             temperatures = []
-            for entry in root.findall('forecast'):
+            forecast = root.find('forecast')
+            for entry in forecast.findall('time'):
                 temperature = entry.find('temperature')
                 if temperature is not None:
                     temperatures.append(float(temperature.get('value', 0.0)))
@@ -1671,7 +1859,8 @@ class FiveDayForecastResponse:
         if self.mode == 'xml':
             root = ET.fromstring(self.data)
             units = []
-            for entry in root.findall('forecast'):
+            forecast = root.find('forecast')
+            for entry in forecast.findall('time'):
                 temperature = entry.find('temperature')
                 if temperature is not None:
                     units.append(temperature.get('unit', None))
@@ -1691,12 +1880,16 @@ class FiveDayForecastResponse:
         if self.mode == 'xml':
             root = ET.fromstring(self.data)
             feels_like_temps = []
-            for entry in root.findall('forecast'):
-                feels_like = entry.find('feels_like')
-                if feels_like is not None:
-                    feels_like_temps.append(float(feels_like.get('value', 0.0)))
-                else:
-                    feels_like_temps.append(0.0)
+            forecast = root.find('forecast')
+            if forecast is not None:
+                for entry in forecast.findall('time'):
+                    feels_like = entry.find('feels_like')
+                    if feels_like is not None:
+                        feels_like_temps.append(float(feels_like.get('value', 0.0)))
+                    else:
+                        feels_like_temps.append(0.0)
+            else:
+                feels_like_temps = []
             return feels_like_temps
         else:
             return [entry.get('main', {}).get('feels_like', 0.0) for entry in self.data.get('list', [])]
@@ -1713,12 +1906,16 @@ class FiveDayForecastResponse:
         if self.mode == 'xml':
             root = ET.fromstring(self.data)
             units = []
-            for entry in root.findall('forecast'):
-                feels_like = entry.find('feels_like')
-                if feels_like is not None:
-                    units.append(feels_like.get('unit', None))
-                else:
-                    units.append(None)
+            forecast = root.find('forecast')
+            if forecast is not None:
+                for entry in forecast.findall('time'):
+                    feels_like = entry.find('feels_like')
+                    if feels_like is not None:
+                        units.append(feels_like.get('unit', None))
+                    else:
+                        units.append(None)
+            else:
+                units = []
             return units
         else:
             return []
@@ -1733,7 +1930,8 @@ class FiveDayForecastResponse:
         if self.mode == 'xml':
             root = ET.fromstring(self.data)
             min_temps = []
-            for entry in root.findall('forecast'):
+            forecast = root.find('forecast')
+            for entry in forecast.findall('time'):
                 temperature = entry.find('temperature')
                 if temperature is not None:
                     min_temps.append(float(temperature.get('min', 0.0)))
@@ -1753,7 +1951,8 @@ class FiveDayForecastResponse:
         if self.mode == 'xml':
             root = ET.fromstring(self.data)
             max_temps = []
-            for entry in root.findall('forecast'):
+            forecast = root.find('forecast')
+            for entry in forecast.findall('time'):
                 temperature = entry.find('temperature')
                 if temperature is not None:
                     max_temps.append(float(temperature.get('max', 0.0)))
@@ -1773,7 +1972,8 @@ class FiveDayForecastResponse:
         if self.mode == 'xml':
             root = ET.fromstring(self.data)
             pressures = []
-            for entry in root.findall('forecast'):
+            forecast = root.find('forecast')
+            for entry in forecast.findall('time'):
                 pressure = entry.find('pressure')
                 if pressure is not None:
                     pressures.append(int(pressure.get('value', 0)))
@@ -1795,7 +1995,8 @@ class FiveDayForecastResponse:
         if self.mode == 'xml':
             root = ET.fromstring(self.data)
             units = []
-            for entry in root.findall('forecast'):
+            forecast = root.find('forecast')
+            for entry in forecast.findall('time'):
                 pressure = entry.find('pressure')
                 if pressure is not None:
                     units.append(pressure.get('unit', None))
@@ -1843,12 +2044,16 @@ class FiveDayForecastResponse:
         if self.mode == 'xml':
             root = ET.fromstring(self.data)
             humidities = []
-            for entry in root.findall('forecast'):
-                humidity = entry.find('humidity')
-                if humidity is not None:
-                    humidities.append(int(humidity.get('value', 0)))
-                else:
-                    humidities.append(0)
+            forecast = root.find('forecast')
+            if forecast is not None:
+                for entry in forecast.findall('time'):
+                    humidity = entry.find('humidity')
+                    if humidity is not None:
+                        humidities.append(int(humidity.get('value', 0)))
+                    else:
+                        humidities.append(0)
+            else:
+                humidities = []
             return humidities
         else:
             return [entry.get('main', {}).get('humidity', 0) for entry in self.data.get('list', [])]
@@ -1865,12 +2070,16 @@ class FiveDayForecastResponse:
         if self.mode == 'xml':
             root = ET.fromstring(self.data)
             units = []
-            for entry in root.findall('forecast'):
-                humidity = entry.find('humidity')
-                if humidity is not None:
-                    units.append(humidity.get('unit', None))
-                else:
-                    units.append(None)
+            forecast = root.find('forecast')
+            if forecast is not None:
+                for entry in forecast.findall('time'):
+                    humidity = entry.find('humidity')
+                    if humidity is not None:
+                        units.append(humidity.get('unit', None))
+                    else:
+                        units.append(None)
+            else:
+                units = []
             return units
         else:
             return []
@@ -1885,7 +2094,8 @@ class FiveDayForecastResponse:
         if self.mode == 'xml':
             root = ET.fromstring(self.data)
             weather_ids = []
-            for entry in root.findall('forecast'):
+            forecast = root.find('forecast')
+            for entry in forecast.findall('time'):
                 symbol = entry.find('symbol')
                 if symbol is not None:
                     weather_ids.append(int(symbol.get('number', -1)))
@@ -1919,7 +2129,8 @@ class FiveDayForecastResponse:
         if self.mode == 'xml':
             root = ET.fromstring(self.data)
             weather_mains = []
-            for entry in root.findall('forecast'):
+            forecast = root.find('forecast')
+            for entry in forecast.findall('time'):
                 symbol = entry.find('symbol')
                 if symbol is not None:
                     weather_mains.append(symbol.get('name', None))
@@ -1939,7 +2150,8 @@ class FiveDayForecastResponse:
         if self.mode == 'xml':
             root = ET.fromstring(self.data)
             weather_icons = []
-            for entry in root.findall('forecast'):
+            forecast = root.find('forecast')
+            for entry in forecast.findall('time'):
                 symbol = entry.find('symbol')
                 if symbol is not None:
                     weather_icons.append(symbol.get('var', None))
@@ -1959,12 +2171,16 @@ class FiveDayForecastResponse:
         if self.mode == 'xml':
             root = ET.fromstring(self.data)
             clouds_list = []
-            for entry in root.findall('forecast'):
-                clouds = entry.find('clouds')
-                if clouds is not None:
-                    clouds_list.append(int(clouds.get('all', 0)))
-                else:
-                    clouds_list.append(0)
+            forecast = root.find('forecast')
+            if forecast is not None:
+                for entry in forecast.findall('time'):
+                    clouds = entry.find('clouds')
+                    if clouds is not None:
+                        clouds_list.append(int(clouds.get('all', 0)))
+                    else:
+                        clouds_list.append(0)
+            else:
+                clouds_list = []
             return clouds_list
         else:
             return [entry.get('clouds', {}).get('all', 0) for entry in self.data.get('list', [])]
@@ -1980,14 +2196,18 @@ class FiveDayForecastResponse:
         """
         if self.mode == 'xml':
             root = ET.fromstring(self.data)
-            clouds_names = []
-            for entry in root.findall('forecast'):
-                clouds = entry.find('clouds')
-                if clouds is not None:
-                    clouds_names.append(clouds.get('name', None))
-                else:
-                    clouds_names.append(None)
-            return clouds_names
+            clouds_list = []
+            forecast = root.find('forecast')
+            if forecast is not None:
+                for entry in forecast.findall('time'):
+                    clouds = entry.find('clouds')
+                    if clouds is not None:
+                        clouds_list.append(clouds.get('value', None))
+                    else:
+                        clouds_list.append(None)
+            else:
+                clouds_list = []
+            return clouds_list
         else:
             return []
 
@@ -2003,12 +2223,16 @@ class FiveDayForecastResponse:
         if self.mode == 'xml':
             root = ET.fromstring(self.data)
             units = []
-            for entry in root.findall('forecast'):
-                clouds = entry.find('clouds')
-                if clouds is not None:
-                    units.append(clouds.get('unit', None))
-                else:
-                    units.append(None)
+            forecast = root.find('forecast')
+            if forecast is not None:
+                for entry in forecast.findall('time'):
+                    clouds = entry.find('clouds')
+                    if clouds is not None:
+                        units.append(clouds.get('unit', None))
+                    else:
+                        units.append(None)
+            else:
+                units = []
             return units
         else:
             return []
@@ -2023,7 +2247,8 @@ class FiveDayForecastResponse:
         if self.mode == 'xml':
             root = ET.fromstring(self.data)
             wind_speeds = []
-            for entry in root.findall('forecast'):
+            forecast = root.find('forecast')
+            for entry in forecast.findall('time'):
                 wind = entry.find('windSpeed')
                 if wind is not None:
                     wind_speeds.append(float(wind.get('mps', 0.0)))
@@ -2045,7 +2270,8 @@ class FiveDayForecastResponse:
         if self.mode == 'xml':
             root = ET.fromstring(self.data)
             units = []
-            for entry in root.findall('forecast'):
+            forecast = root.find('forecast')
+            for entry in forecast.findall('time'):
                 wind = entry.find('windSpeed')
                 if wind is not None:
                     units.append(wind.get('unit', None))
@@ -2067,7 +2293,8 @@ class FiveDayForecastResponse:
         if self.mode == 'xml':
             root = ET.fromstring(self.data)
             wind_speed_names = []
-            for entry in root.findall('forecast'):
+            forecast = root.find('forecast')
+            for entry in forecast.findall('time'):
                 wind = entry.find('windSpeed')
                 if wind is not None:
                     wind_speed_names.append(wind.get('name', None))
@@ -2087,7 +2314,8 @@ class FiveDayForecastResponse:
         if self.mode == 'xml':
             root = ET.fromstring(self.data)
             wind_degrees = []
-            for entry in root.findall('forecast'):
+            forecast = root.find('forecast')
+            for entry in forecast.findall('time'):
                 wind = entry.find('windDirection')
                 if wind is not None:
                     wind_degrees.append(float(wind.get('deg', 0.0)))
@@ -2109,7 +2337,8 @@ class FiveDayForecastResponse:
         if self.mode == 'xml':
             root = ET.fromstring(self.data)
             wind_directions = []
-            for entry in root.findall('forecast'):
+            forecast = root.find('forecast')
+            for entry in forecast.findall('time'):
                 wind = entry.find('windDirection')
                 if wind is not None:
                     wind_directions.append(wind.get('code', None))
@@ -2131,7 +2360,8 @@ class FiveDayForecastResponse:
         if self.mode == 'xml':
             root = ET.fromstring(self.data)
             wind_direction_fulls = []
-            for entry in root.findall('forecast'):
+            forecast = root.find('forecast')
+            for entry in forecast.findall('time'):
                 wind = entry.find('windDirection')
                 if wind is not None:
                     wind_direction_fulls.append(wind.get('name', None))
@@ -2151,7 +2381,8 @@ class FiveDayForecastResponse:
         if self.mode == 'xml':
             root = ET.fromstring(self.data)
             wind_gusts = []
-            for entry in root.findall('forecast'):
+            forecast = root.find('forecast')
+            for entry in forecast.findall('time'):
                 wind = entry.find('windGust')
                 if wind is not None:
                     wind_gusts.append(float(wind.get('gust', 0.0)))
@@ -2173,7 +2404,8 @@ class FiveDayForecastResponse:
         if self.mode == 'xml':
             root = ET.fromstring(self.data)
             units = []
-            for entry in root.findall('forecast'):
+            forecast = root.find('forecast')
+            for entry in forecast.findall('time'):
                 wind = entry.find('windGust')
                 if wind is not None:
                     units.append(wind.get('unit', None))
@@ -2193,7 +2425,8 @@ class FiveDayForecastResponse:
         if self.mode == 'xml':
             root = ET.fromstring(self.data)
             visibilities = []
-            for entry in root.findall('forecast'):
+            forecast = root.find('forecast')
+            for entry in forecast.findall('time'):
                 visibility = entry.find('visibility')
                 if visibility is not None:
                     visibilities.append(int(visibility.get('value', 0)))
@@ -2213,12 +2446,16 @@ class FiveDayForecastResponse:
         if self.mode == 'xml':
             root = ET.fromstring(self.data)
             pops = []
-            for entry in root.findall('forecast'):
-                precipitation = entry.find('precipitation')
-                if precipitation is not None:
-                    pops.append(int(precipitation.get('probability', 0)))
-                else:
-                    pops.append(0.0)
+            forecast = root.find('forecast')
+            if forecast is not None:
+                for entry in forecast.findall('time'):
+                    pop = entry.find('precipitation')
+                    if pop is not None:
+                        pops.append(float(pop.get('probability', 0.0)))
+                    else:
+                        pops.append(0.0)
+            else:
+                pops = []
             return pops
         else:
             return [entry.get('pop', 0.0) for entry in self.data.get('list', [])]
@@ -2233,7 +2470,8 @@ class FiveDayForecastResponse:
         if self.mode == 'xml':
             root = ET.fromstring(self.data)
             rains = []
-            for entry in root.findall('forecast'):
+            forecast = root.find('forecast')
+            for entry in forecast.findall('time'):
                 precipitation = entry.find('precipitation')
                 if precipitation is not None:
                     if precipitation.get('type') == 'rain':
@@ -2256,7 +2494,8 @@ class FiveDayForecastResponse:
         if self.mode == 'xml':
             root = ET.fromstring(self.data)
             snows = []
-            for entry in root.findall('forecast'):
+            forecast = root.find('forecast')
+            for entry in forecast.findall('time'):
                 precipitation = entry.find('precipitation')
                 if precipitation is not None:
                     if precipitation.get('type') == 'snow':
@@ -2308,7 +2547,9 @@ class FiveDayForecastResponse:
             root = ET.fromstring(self.data)
             location = root.find('location')
             if location is not None:
-                return location.get('name', None)
+                name = location.find('name')
+                if name is not None:
+                    return name.text
         else:
             return self.data.get('city', {}).get('name', None)
 
@@ -2359,7 +2600,9 @@ class FiveDayForecastResponse:
             root = ET.fromstring(self.data)
             location = root.find('location')
             if location is not None:
-                return location.get('country', None)
+                country = location.find('country')
+                if country is not None:
+                    return country.text
             return None
         else:
             return self.data.get('city', {}).get('country', None)
@@ -2389,39 +2632,43 @@ class FiveDayForecastResponse:
             root = ET.fromstring(self.data)
             location = root.find('location')
             if location is not None:
-                return int(location.get('timezone', -1))
+                return int(location.find('timezone').text)
             return -1
         else:
             return self.data.get('city', {}).get('timezone', -1)
 
-    def get_sunrise(self) -> int:
+    def get_sunrise(self) -> str | int:
         """
         Returns the sunrise time from the response data.
         The sunrise time is typically represented as a Unix timestamp (seconds since epoch).
 
-        :return sunrise: Sunrise time as an integer (Unix timestamp).
+        :return sunrise: Sunrise time as an integer (Unix timestamp) or in the `ISO 8601`_ format.
+
+        .. _ISO 8601: https://en.wikipedia.org/wiki/ISO_8601
         """
         if self.mode == 'xml':
             root = ET.fromstring(self.data)
             sun = root.find('sun')
             if sun is not None:
-                return int(sun.get('rise', -1))
+                return sun.get('rise', "1970-01-01T00:00:00Z")
             return -1
         else:
             return self.data.get('city', {}).get('sunrise', -1)
 
-    def get_sunset(self) -> int:
+    def get_sunset(self) -> str | int:
         """
         Returns the sunset time from the response data.
         The sunset time is typically represented as a Unix timestamp (seconds since epoch).
 
-        :return sunset: Sunset time as an integer (Unix timestamp).
+        :return sunset: Sunset time as an integer (Unix timestamp) or in the `ISO 8601`_ format.
+
+        .. _ISO 8601: https://en.wikipedia.org/wiki/ISO_8601
         """
         if self.mode == 'xml':
             root = ET.fromstring(self.data)
             sun = root.find('sun')
             if sun is not None:
-                return int(sun.get('set', -1))
+                return sun.get('set', "1970-01-01T00:00:00Z")
             return -1
         else:
             return self.data.get('city', {}).get('sunset', -1)
@@ -2486,7 +2733,7 @@ class FiveDayForecastResponse:
         else:
             return -1
 
-    def get_lastupdate(self) -> int:
+    def get_lastupdate(self) -> int | None:
         """
         Returns the last update time from the response data.
         The last update time is typically represented as a Unix timestamp (seconds since epoch).
@@ -2499,7 +2746,7 @@ class FiveDayForecastResponse:
             root = ET.fromstring(self.data)
             meta = root.find('meta')
             if meta is not None:
-                return int(meta.get('lastupdate', -1))
+                return meta.find('lastupdate').text
             return -1
         else:
             return -1
@@ -2517,7 +2764,9 @@ class FiveDayForecastResponse:
             root = ET.fromstring(self.data)
             meta = root.find('meta')
             if meta is not None:
-                return int(meta.get('calctime', -1))
+                calctime = meta.find('calctime')
+                if calctime is not None:
+                    return calctime.text
             return -1
         else:
             return -1
@@ -2535,7 +2784,7 @@ class FiveDayForecastResponse:
             root = ET.fromstring(self.data)
             meta = root.find('meta')
             if meta is not None:
-                return int(meta.get('nextupdate', -1))
+                return meta.find('nextupdate').text
             return -1
         else:
             return -1
@@ -2749,202 +2998,3 @@ class GeocodingResponse:
         if isinstance(self.data, list):
             return None
         return self.data.get('zip', None)
-
-
-class WeatherStationMeasurements:
-    """
-    Class to represent measurements from a weather station.
-    It provides methods to extract various measurement parameters from the response data.
-    """
-
-    def __init__(self, data: list[dict]):
-        """
-        Initializes the WeatherStationMeasurements with the provided data.
-
-        :param data: The response data as a dict.
-        """
-        self.data = data
-
-    def get_station_id(self) -> list[int]:
-        """
-        Returns the ID of the weather station from the response data.
-        The ID is typically an integer representing the unique identifier of the weather station.
-
-        :return station_id: Weather station ID as an integer.
-        """
-        return [entry.get('station_id', 0) for entry in self.data]
-
-    def get_types(self) -> list[str | None]:
-        """
-        Returns a list of measurement types for each entry in the response data.
-        The measurement type is typically represented as a string (e.g., 'temperature', 'humidity').
-
-        :return types: List of measurement types (strings).
-        """
-        return [entry.get('type', None) for entry in self.data]
-
-    def get_times(self) -> list[int]:
-        """
-        Returns the time of the measurement from the response data.
-        The time is typically represented as a Unix timestamp (seconds since epoch).
-
-        :return time: Measurement time as an integer (Unix timestamp).
-        """
-        return [entry.get('date', 0) for entry in self.data]
-
-    def get_temperatures_max(self) -> list[float]:
-        """
-        Returns a list of maximum temperatures for each measurement entry.
-        The maximum temperature is typically measured in degrees Celsius (°C).
-
-        :return max_temperatures: List of maximum temperatures (floats).
-        """
-        return [entry.get('temp', {}).get('max', 0.0) for entry in self.data]
-
-    def get_temperatures_min(self) -> list[float]:
-        """
-        Returns a list of minimum temperatures for each measurement entry.
-        The minimum temperature is typically measured in degrees Celsius (°C).
-
-        :return min_temperatures: List of minimum temperatures (floats).
-        """
-        return [entry.get('temp', {}).get('min', 0.0) for entry in self.data]
-
-    def get_temperatures_average(self) -> list[float]:
-        """
-        Returns a list of average temperatures for each measurement entry.
-        The average temperature is typically measured in degrees Celsius (°C).
-
-        :return average_temperatures: List of average temperatures (floats).
-        """
-        return [entry.get('temp', {}).get('average', 0.0) for entry in self.data]
-
-    def get_temperatures_weight(self) -> list[int]:
-        """
-        Returns a list of temperature weights for each measurement entry.
-        The temperature weight is typically an integer representing the weight of the temperature measurement.
-
-        :return temperature_weights: List of temperature weights (integers).
-        """
-        return [entry.get('temp', {}).get('weight', 0) for entry in self.data]
-
-    def get_humidity(self) -> list[float]:
-        """
-        Returns a list of humidity values for each measurement entry.
-        Humidity is typically measured as a percentage (0-100%).
-
-        :return humidity: List of humidity values (integers).
-        """
-        return [entry.get('humidity', {}).get('average', 0.0) for entry in self.data]
-
-    def get_humidity_weight(self) -> list[int]:
-        """
-        Returns a list of humidity weights for each measurement entry.
-        The humidity weight is typically an integer representing the weight of the humidity measurement.
-
-        :return humidity_weights: List of humidity weights (integers).
-        """
-        return [entry.get('humidity', {}).get('weight', 0) for entry in self.data]
-
-class WeatherStation:
-    """
-    Class to represent a weather station.
-    It provides methods to extract various weather station parameters from the response data.
-    """
-    def __init__(self, data: dict):
-        """
-        Initializes the WeatherStation with the provided data.
-
-        :param data: The response data as a dict.
-        """
-        self.data = data
-
-    def get_id(self) -> int:
-        """
-        Returns the ID of the weather station from the response data.
-        The ID is typically an integer representing the unique identifier of the weather station.
-
-        :return id: Weather station ID as an integer.
-        """
-        return self.data.get('ID', 0)
-
-    def get_name(self) -> str | None:
-        """
-        Returns the name of the weather station from the response data.
-        The name is typically a string representing the name of the weather station.
-
-        :return name: Weather station name as a string or None.
-        """
-        return self.data.get('name', None)
-
-    def get_latitude(self) -> float:
-        """
-        Returns the latitude of the weather station from the response data.
-        Latitude is typically a float representing the geographical coordinate.
-
-        :return latitude: Latitude as a float.
-        """
-        return self.data.get('latitude', 0.0)
-
-    def get_longitude(self) -> float:
-        """
-        Returns the longitude of the weather station from the response data.
-        Longitude is typically a float representing the geographical coordinate.
-
-        :return longitude: Longitude as a float.
-        """
-        return self.data.get('longitude', 0.0)
-
-    def get_altitude(self) -> float:
-        """
-        Returns the altitude of the weather station from the response data.
-        The altitude is typically a float representing the height above sea level in meters.
-
-        :return altitude: Altitude as a float.
-        """
-        return self.data.get('altitude', 0.0)
-
-    def get_updated_at(self) -> str | None:
-        """
-        Returns the last updated time of the weather station from the response data.
-        The last updated time is typically a string representing the date and time of the last update.
-
-        :return updated_at: Last updated time as a string or None.
-        """
-        return self.data.get('updated_at', None)
-
-    def get_created_at(self) -> str | None:
-        """
-        Returns the creation time of the weather station from the response data.
-        The creation time is typically a string representing the date and time of the creation.
-
-        :return created_at: Creation time as a string or None.
-        """
-        return self.data.get('created_at', None)
-
-    def get_user_id(self) -> str | None:
-        """
-        Returns the user ID associated with the weather station from the response data.
-        The user ID is typically a string representing the unique identifier of the user.
-
-        :return user_id: User ID as a string or None.
-        """
-        return self.data.get('user_id', None)
-
-    def get_source_type(self) -> int:
-        """
-        Returns the source type of the weather station from the response data.
-        The source type is typically an integer representing the type of data source (e.g., 1 for manual, 2 for automatic).
-
-        :return source_type: Source type as an integer.
-        """
-        return self.data.get('source_type', 0)
-
-    def get_measurements(self) -> WeatherStationMeasurements:
-        """
-        Returns the measurements associated with the weather station from the response data.
-        The measurements are typically represented as a list of dictionaries containing various measurement parameters.
-
-        :return measurements: :class:`WeatherStationMeasurements` object containing the measurements.
-        """
-        pass

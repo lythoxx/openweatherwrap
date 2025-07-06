@@ -9,7 +9,7 @@ OpenWeatherWrap is an unofficial wrapper for the OpenWeatherMap API.
 - 3-hour Forecast 5 days
 - Air Pollution API
 - Geocoding API
-- Weather Stations
+- Weather Maps 1.0
 
 ## Getting Started
 
@@ -84,6 +84,29 @@ api = GeocodingAPI(API_KEY)
 # Getting the data
 response = api.get_by_city("London", "England")
 print(f"London has a latitude of {response.get_latitude()}° and a longitude of {response.get_longitude()}°")
+```
+
+### Async
+
+OpenWeatherWrap also includes asynchronous handling of the OpenWeatherMap API.
+
+The usage is almost the same as the synchronous handler.
+
+```python
+from openweatherwrap.asyncapi import OneCallAPI
+import asyncio
+
+async def onecall_example():
+    # Create an instance of the API
+    api = OneCallAPI(API_KEY, "London, England", units="metric")
+    # Get only the current weather
+    response = await api.get_weather(exclude=["minutely", "hourly", "daily", "alerts"])
+    #Access the data
+    print(f"The current temperature in London is {response.get_current_temp()}°C.")
+    print(f"The temperature feels like {response.get_current_feels_like()}°C")
+
+if __name__ == "__main__":
+    asyncio.run(onecall_example())
 ```
 
 ## Attribution

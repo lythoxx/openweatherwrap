@@ -7,5 +7,6 @@
    :caption: Contents:
 
    openweatherwrap/api
+   openweatherwrap/asyncapi
    openweatherwrap/core
    openweatherwrap/errors

@@ -1,74 +1,23 @@
 """
-Classes for handling OpenWeatherMap API requests.
+Classes for handling OpenWeatherMap API requests asnychronously.
 These classes are designed to be used with the corresponding OpenWeatherMap API endpoints.
 
 Example:
     If you want to use the One Call API, you can create an instance of the OneCallAPI class.
 """
-import requests
+from openweatherwrap._utils import _make_get_request_async
+from .api import *
 
-from typing import Literal
-from geopy.geocoders import Nominatim
+import aiohttp
 
-from openweatherwrap._utils import _make_get_request
-
-from .core import AirPollutionResponse, CurrentWeatherResponse, GeocodingResponse, OneCallResponse, FiveDayForecastResponse
-
-from .errors import *
-
-class OpenWeatherMapAPI:
-    """
-    Base class for OpenWeatherMap API wrappers.
-
-    This class does not make any API calls itself, but provides common functionality for all OpenWeatherMap API wrappers.
-    """
-    def __init__(self, api_key: str, location: str | tuple, language: str='en', units: Literal['standard', 'metric', 'imperial'] = 'standard') -> None:
-        """
-        Base class for the OpenWeatherMap API wrapper.
-
-        Args:
-            api_key (str): Your OpenWeatherMap API key.
-            location (str | tuple): Location as a string (city name) or a tuple (latitude, longitude).
-            language (str, optional): Language for the API response (e.g., 'en', 'fr'). Defaults to 'en'.
-            units (Literal['standard', 'metric', 'imperial'], optional): Units for temperature ('standard', 'metric', 'imperial'). Defaults to 'standard'.
-
-        Raises:
-            ValueError: If the location is not found when a string is provided.
-            ValueError: If the location tuple is not valid (not a tuple of two floats or ints).
-            ValueError: If the latitude is not between -90 and 90, and longitude is not between -180 and 180.
-        """
-        self.api_key = api_key
-        self.location = location
-        self.language = language
-        self.units = units
-
-        if not isinstance(location, tuple):
-            # Convert string location to tuple using geopy
-            geolocator = Nominatim(user_agent="openweatherwrap")
-            location_data = geolocator.geocode(location)
-            if location_data:
-                self.location = (location_data.latitude, location_data.longitude)
-            else:
-                raise ValueError("Location not found. Please provide a valid location.")
-        else:
-            if len(location) != 2 or not all(isinstance(coord, (int, float)) for coord in location):
-                raise ValueError("Location must be a tuple of (latitude, longitude).")
-            else:
-                if not (-90 <= location[0] <= 90 and -180 <= location[1] <= 180):
-                    raise ValueError("Latitude must be between -90 and 90, and longitude must be between -180 and 180.")
-
-    def __str__(self) -> str:
-        """
-        Returns a string representation of the API instance.
-
-        Returns:
-            str: String representation of the API instance.
-        """
-        return f"{self.__class__.__name__}(api_key={self.api_key}, location={self.location}, language={self.language}, units={self.units})"
-
+from .core import OneCallResponse
 
 class OneCallAPI(OpenWeatherMapAPI):
-    """Wrapper for the One Call API from OpenWeatherMap."""
+    """
+    Asynchronous class for handling OpenWeatherMap One Call API requests.
+    This class is designed to be used with the One Call API endpoint.
+    """
+
     def __init__(self, api_key: str, location: str | tuple, language: str = 'en', units: Literal['standard', 'metric', 'imperial'] = 'standard') -> None:
         """
         Initializes the OneCall API wrapper.
@@ -96,16 +45,16 @@ class OneCallAPI(OpenWeatherMapAPI):
             units=self.units
         )
 
-    def get_weather(self, exclude: list[Literal['current', 'minutely', 'hourly', 'daily', 'alerts']] = []) -> OneCallResponse:
+    async def get_weather(self, exclude: list[Literal['current', 'minutely', 'hourly', 'daily', 'alerts']] = []) -> OneCallResponse:
         """
-        Fetches the weather data from the one call API and returns the response as a `OneCallResponse` object`.
-        The response includes all available weather data for the specified location.
+        Asynchronously fetches weather data from the One Call API.
 
         Args:
-            exclude (list[Literal['current', 'minutely', 'hourly', 'daily', 'alerts']], optional): List of data types to exclude from the response. Options are 'current', 'minutely', 'hourly', 'daily', 'alerts'.
+            exclude (list[Literal['current', 'minutely', 'hourly', 'daily', 'alerts']], optional): List of data types to exclude from the response.
+                Defaults to an empty list, which means no data types are excluded.
 
         Returns:
-            OneCallResponse: Object containing the weather data.
+            OneCallResponse: An instance of OneCallResponse containing the weather data.
 
         Raises:
             SubscriptionLevelError: If the API key does not have access to the requested data.
@@ -114,25 +63,19 @@ class OneCallAPI(OpenWeatherMapAPI):
             TooManyRequestsError: If the API rate limit is exceeded.
             OpenWeatherMapException: For internal server errors (500, 502, 503, 504).
         """
-        exclude_str = ','.join(exclude) if exclude else ''
-        if exclude_str:
-            url = self.url + f"&exclude={exclude_str}"
-        else:
-            url = self.url
-        response = _make_get_request(url)
-        return OneCallResponse(response.json())
+        url = f"{self.url}&exclude={','.join(exclude)}" if exclude else self.url
+        response = await _make_get_request_async(url)
+        return OneCallResponse(response)
 
-    def get_timed_weather(self, timestamp: int) -> OneCallResponse:
+    async def get_timed_weather(self, timestamp: int) -> OneCallResponse:
         """
-        Fetches the weather data for a specific timestamp from the one call API and returns the response as a `OneCallResponse` object`.
-
-        Data is available from January 1, 1979 up to 4 days ahead of the current date.
+        Asynchronously fetches weather data for a specific timestamp from the One Call API.
 
         Args:
-            timestamp (int): Unix timestamp for which to fetch the weather data.
+            timestamp (int): The Unix timestamp for which to fetch the weather data.
 
         Returns:
-            OneCallResponse: Object containing the weather data for the specified timestamp.
+            OneCallResponse: An instance of OneCallResponse containing the weather data for the specified timestamp.
 
         Raises:
             SubscriptionLevelError: If the API key does not have access to the requested data.
@@ -141,16 +84,20 @@ class OneCallAPI(OpenWeatherMapAPI):
             TooManyRequestsError: If the API rate limit is exceeded.
             OpenWeatherMapException: For internal server errors (500, 502, 503, 504).
             ValueError: If the timestamp is before January 1, 1979.
+            ValueError: If the timestamp is not a valid UNIX timestamp.
         """
+        if timestamp < 0:
+            raise ValueError("Timestamp must be a positive integer representing seconds since January 1, 1970.")
         if timestamp < 283996800:  # January 1, 1979
             raise ValueError("Timestamp must be greater than or equal to January 1, 1979 (283996800).")
-        url = f"{self.url.replace('onecall?', 'onecall/timemachine?')}&dt={timestamp}"
-        response = _make_get_request(url)
-        return OneCallResponse(response.json())
+        url = self.url.replace('onecall?', 'onecall/timemachine?')
+        url += f"&dt={timestamp}"
+        response = await _make_get_request_async(url)
+        return OneCallResponse(response)
 
-    def get_aggregation(self, date: str) -> OneCallResponse:
+    async def get_aggregation(self, date: str) -> OneCallResponse:
         """
-        Fetches the weather data for a specific date from the one call API and returns the response as a `OneCallResponse` object`.
+        Asynchronously fetches the weather data for a specific date from the one call API and returns the response as a `OneCallResponse` object`.
 
         Args:
             date (str): Date in the `ISO 8601`_ format 'YYYY-MM-DD' for which to fetch the weather data.
@@ -167,16 +114,17 @@ class OneCallAPI(OpenWeatherMapAPI):
 
         .. _ISO 8601: https://en.wikipedia.org/wiki/ISO_8601
         """
-        url = f"{self.url.replace('onecall?', 'onecall/day_summary?')}&date={date}"
-        response = _make_get_request(url)
-        return OneCallResponse(response.json())
+        url = self.url.replace('onecall?', 'onecall/day_summary?')
+        url += f"&date={date}"
+        response = await _make_get_request_async(url)
+        return OneCallResponse(response)
 
-    def get_overview(self) -> str:
+    async def get_overview(self) -> str:
         """
-        Fetches a brief, human-readable overview of the weather data for the specified location.
+        Asynchronously fetches a brief, human-readable overview of the weather data for the specified location.
 
         Returns:
-            str: A string containing a brief overview of the weather data.
+            str: A brief overview of the weather data.
 
         Raises:
             SubscriptionLevelError: If the API key does not have access to the requested data.
@@ -185,12 +133,15 @@ class OneCallAPI(OpenWeatherMapAPI):
             TooManyRequestsError: If the API rate limit is exceeded.
             OpenWeatherMapException: For internal server errors (500, 502, 503, 504).
         """
-        url = f"{self.url.replace('onecall?', 'onecall/overview?').replace(f'&lang={self.language}', '')}"
-        response = _make_get_request(url)
-        return response.json().get('weather_overview', 'No overview available.')
+        url = self.url.replace('onecall?', 'onecall/overview?')
+        response = await _make_get_request_async(url, json=True)
+        return response.get("weather_overview", "No overview available.")
 
 class CurrentWeatherAPI(OpenWeatherMapAPI):
-    """Wrapper for the Current Weather Data API from OpenWeatherMap."""
+    """
+    Asynchronous class for handling OpenWeatherMap Current Weather API requests.
+    This class is designed to be used with the Current Weather API endpoint.
+    """
     def __init__(self, api_key: str, location: str | tuple, language: str = 'en', units: Literal['standard', 'metric', 'imperial'] = 'standard', mode: Literal['xml', 'html', 'json']='json') -> None:
         """
         Initializes the CurrentWeatherData API wrapper.
@@ -209,9 +160,11 @@ class CurrentWeatherAPI(OpenWeatherMapAPI):
             ValueError: If the mode is not 'xml', 'html', or 'json'.
         """
         super().__init__(api_key, location, language, units)
+
+        if mode not in ['xml', 'html', 'json']:
+            raise ValueError("Mode must be one of 'xml', 'html', or 'json'.")
+
         self.mode = mode
-        if self.mode not in ['xml', 'html', 'json']:
-            raise ValueError("Mode must be either 'xml' or 'html' or 'json.")
         self.url = "https://api.openweathermap.org/data/2.5/weather?lat={lat}&lon={lon}&appid={key}&lang={lang}&units={units}&mode={mode}".format(
             lat=self.location[0],
             lon=self.location[1],
@@ -221,12 +174,12 @@ class CurrentWeatherAPI(OpenWeatherMapAPI):
             mode=self.mode
         )
 
-    def get_weather(self) -> str | CurrentWeatherResponse:
+    async def get_weather(self) -> str | CurrentWeatherResponse:
         """
-        Fetches the current weather data from the OpenWeatherMap API and returns the response.
+        Asynchronously fetches current weather data from the Current Weather API.
 
         Returns:
-            str | CurrentWeatherResponse: Returns a string if the mode is 'html', otherwise returns a `CurrentWeatherResponse` object.
+            str | CurrentWeatherResponse: An instance of CurrentWeatherResponse containing the current weather data.
 
         Raises:
             SubscriptionLevelError: If the API key does not have access to the requested data.
@@ -235,16 +188,18 @@ class CurrentWeatherAPI(OpenWeatherMapAPI):
             TooManyRequestsError: If the API rate limit is exceeded.
             OpenWeatherMapException: For internal server errors (500, 502, 503, 504).
         """
-        response = _make_get_request(self.url)
-        if self.mode == 'html':
-            return response.text
-        elif self.mode == 'xml':
-            return CurrentWeatherResponse(response.content, self.mode)
+        response = await _make_get_request_async(self.url, json=(self.mode == 'json'))
+        if self.mode != 'html':
+            return CurrentWeatherResponse(response, mode=self.mode)
         else:
-            return CurrentWeatherResponse(response.json(), self.mode)
+            return response
 
 class FiveDayForecast(OpenWeatherMapAPI):
-    """Fetches the 5-day / 3-hour weather forecast from OpenWeatherMap."""
+    """
+    Asynchronous class for handling OpenWeatherMap 5-Day Forecast API requests.
+    This class is designed to be used with the 5-Day Forecast API endpoint.
+    """
+
     def __init__(self, api_key: str, location: str | tuple, count: int = -1, language: str = 'en', units: Literal['standard', 'metric', 'imperial'] = 'standard', mode:Literal['json', 'xml']='json') -> None:
         """
         Initializes the FiveDayForecast API wrapper.
@@ -252,22 +207,24 @@ class FiveDayForecast(OpenWeatherMapAPI):
         Args:
             api_key (str): Your OpenWeatherMap API key.
             location (str | tuple): Location as a string (city name) or a tuple (latitude, longitude).
-            count (int, optional): Number of forecast entries to return. If -1, returns all available entries.
+            count (int, optional): Number of forecast entries to return. Defaults to -1, which returns all available entries.
             language (str, optional): Language for the API response (default is 'en').
             units (Literal['standard', 'metric', 'imperial'], optional): Units for temperature ('standard', 'metric', 'imperial').
-            mode (Literal['json', 'xml'], optional): Response format ('xml' or 'json'). Defaults to 'json'.
+            mode (Literal['json', 'xml'], optional): Response format ('json' or 'xml'). Defaults to 'json'.
 
         Raises:
             ValueError: If the location is not found when a string is provided.
             ValueError: If the location tuple is not valid (not a tuple of two floats or ints).
             ValueError: If the latitude is not between -90 and 90, and longitude is not between -180 and 180.
-            ValueError: If the mode is not 'xml' or 'json'.
+            ValueError: If the mode is not 'json' or 'xml'.
         """
         super().__init__(api_key, location, language, units)
+
+        if mode not in ['json', 'xml']:
+            raise ValueError("Mode must be one of 'json' or 'xml'.")
+
         self.mode = mode
         self.count = count
-        if self.mode not in ['xml', 'json']:
-            raise ValueError("Mode must be either 'xml' or 'json'.")
         self.url = "https://api.openweathermap.org/data/2.5/forecast?lat={lat}&lon={lon}&appid={key}&lang={lang}&units={units}&mode={mode}".format(
             lat=self.location[0],
             lon=self.location[1],
@@ -279,12 +236,12 @@ class FiveDayForecast(OpenWeatherMapAPI):
         if self.count > 0:
             self.url += f"&cnt={self.count}"
 
-    def get_forecast(self) -> FiveDayForecastResponse:
+    async def get_forecast(self) -> FiveDayForecastResponse:
         """
-        Fetches the 5-day / 3-hour weather forecast from the OpenWeatherMap API and returns the response.
+        Asynchronously fetches the 5-day weather forecast data from the 5-Day Forecast API.
 
         Returns:
-            FiveDayForecastResponse: Object containing the forecast data.
+            FiveDayForecastResponse: An instance of FiveDayForecastResponse containing the forecast data.
 
         Raises:
             SubscriptionLevelError: If the API key does not have access to the requested data.
@@ -293,21 +250,24 @@ class FiveDayForecast(OpenWeatherMapAPI):
             TooManyRequestsError: If the API rate limit is exceeded.
             OpenWeatherMapException: For internal server errors (500, 502, 503, 504).
         """
-        response = _make_get_request(self.url)
-        if self.mode == 'xml':
-            return FiveDayForecastResponse(response.content, self.mode)
-        else:
-            return FiveDayForecastResponse(response.json(), self.mode)
+        response = await _make_get_request_async(self.url, json=(self.mode == 'json'))
+        return FiveDayForecastResponse(response, mode=self.mode)
 
 class AirPollutionAPI(OpenWeatherMapAPI):
-    """Wrapper for the Air Pollution API from OpenWeatherMap."""
-    def __init__(self, api_key: str, location: str | tuple) -> None:
+    """
+    Asynchronous class for handling OpenWeatherMap Air Pollution API requests.
+    This class is designed to be used with the Air Pollution API endpoint.
+    """
+
+    def __init__(self, api_key: str, location: str | tuple, language: str = 'en', units: Literal['standard', 'metric', 'imperial'] = 'standard') -> None:
         """
         Initializes the AirPollution API wrapper.
 
         Args:
             api_key (str): Your OpenWeatherMap API key.
             location (str | tuple): Location as a string (city name) or a tuple (latitude, longitude).
+            language (str, optional): Language for the API response (default is 'en').
+            units (Literal['standard', 'metric', 'imperial'], optional): Units for temperature ('standard', 'metric', 'imperial').
 
         Raises:
             ValueError: If the location is not found when a string is provided.
@@ -315,18 +275,19 @@ class AirPollutionAPI(OpenWeatherMapAPI):
             ValueError: If the latitude is not between -90 and 90, and longitude is not between -180 and 180.
         """
         super().__init__(api_key, location)
+
         self.url = "https://api.openweathermap.org/data/2.5/air_pollution?lat={lat}&lon={lon}&appid={key}".format(
             lat=self.location[0],
             lon=self.location[1],
-            key=self.api_key,
+            key=self.api_key
         )
 
-    def get_current_air_pollution(self) -> AirPollutionResponse:
+    async def get_air_pollution(self) -> AirPollutionResponse:
         """
-        Fetches the current air pollution data from the OpenWeatherMap API and returns the response.
+        Asynchronously fetches air pollution data from the Air Pollution API.
 
         Returns:
-            AirPollutionResponse: Object containing the air pollution data.
+            AirPollutionResponse: An instance of AirPollutionResponse containing the air pollution data.
 
         Raises:
             SubscriptionLevelError: If the API key does not have access to the requested data.
@@ -335,15 +296,15 @@ class AirPollutionAPI(OpenWeatherMapAPI):
             TooManyRequestsError: If the API rate limit is exceeded.
             OpenWeatherMapException: For internal server errors (500, 502, 503, 504).
         """
-        response = _make_get_request(self.url)
-        return AirPollutionResponse(response.json())
+        response = await _make_get_request_async(self.url)
+        return AirPollutionResponse(response)
 
-    def get_air_pollution_forecast(self) -> AirPollutionResponse:
+    async def get_air_pollution_forecast(self) -> AirPollutionResponse:
         """
-        Fetches the air pollution forecast data from the OpenWeatherMap API and returns the response.
+        Asynchronously fetches air pollution forecast data from the Air Pollution API.
 
         Returns:
-            AirPollutionResponse: Object containing the air pollution forecast data.
+            AirPollutionResponse: An instance of AirPollutionResponse containing the air pollution forecast data.
 
         Raises:
             SubscriptionLevelError: If the API key does not have access to the requested data.
@@ -352,20 +313,20 @@ class AirPollutionAPI(OpenWeatherMapAPI):
             TooManyRequestsError: If the API rate limit is exceeded.
             OpenWeatherMapException: For internal server errors (500, 502, 503, 504).
         """
-        url = f"{self.url.replace('air_pollution?', 'air_pollution/forecast?')}"
-        response = _make_get_request(url)
-        return AirPollutionResponse(response.json())
+        url = self.url.replace('air_pollution?', 'air_pollution/forecast?')
+        response = await _make_get_request_async(url)
+        return AirPollutionResponse(response)
 
-    def get_air_pollution_history(self, start: int, end: int) -> AirPollutionResponse:
+    async def get_air_pollution_history(self, start: int, end: int) -> AirPollutionResponse:
         """
-        Fetches the historical air pollution data from the OpenWeatherMap API for a specific time range and returns the response.
+        Asynchronously fetches historical air pollution data from the Air Pollution API.
 
         Args:
-            start (int): Start timestamp (Unix time) for the historical data.
-            end (int): End timestamp (Unix time) for the historical data.
+            start (int): Start time in UNIX timestamp format.
+            end (int): End time in UNIX timestamp format.
 
         Returns:
-            AirPollutionResponse: Object containing the historical air pollution data.
+            AirPollutionResponse: An instance of AirPollutionResponse containing the historical air pollution data.
 
         Raises:
             SubscriptionLevelError: If the API key does not have access to the requested data.
@@ -374,12 +335,17 @@ class AirPollutionAPI(OpenWeatherMapAPI):
             TooManyRequestsError: If the API rate limit is exceeded.
             OpenWeatherMapException: For internal server errors (500, 502, 503, 504).
         """
-        url = f"{self.url.replace('air_pollution?', 'air_pollution/history?')}&start={start}&end={end}"
-        response = _make_get_request(url)
-        return GeocodingResponse(response.json())
+        url = self.url.replace('air_pollution?', 'air_pollution/history?')
+        url += f"&start={start}&end={end}"
+        response = await _make_get_request_async(url)
+        return AirPollutionResponse(response)
 
 class GeocodingAPI(OpenWeatherMapAPI):
-    """Wrapper for the Geocoding API from OpenWeatherMap."""
+    """
+    Asynchronous class for handling OpenWeatherMap Geocoding API requests.
+    This class is designed to be used with the Geocoding API endpoint.
+    """
+
     def __init__(self, api_key: str) -> None:
         """
         Initializes the Geocoding API wrapper.
@@ -388,69 +354,45 @@ class GeocodingAPI(OpenWeatherMapAPI):
             api_key (str): Your OpenWeatherMap API key.
         """
         super().__init__(api_key, (0.0, 0.0))
-        self.url = "https://api.openweathermap.org/geo/1.0/direct?&appid={key}".format(
+
+        self.url = "https://api.openweathermap.org/geo/1.0/direct?appid={key}&q=".format(
             key=self.api_key
         )
 
-    def get_by_city(self, city: str, country: str, state_code = None, limit=1) -> GeocodingResponse:
+    async def get_by_city(self, city: str, country: str, state_code = None, limit=1) -> GeocodingResponse:
         """
-        Fetches the geocoding data for a city and country from the OpenWeatherMap API and returns the response.
-
-        State code applies only to the United States and is optional.
+        Fetches geocoding data for a city and country.
 
         Args:
-            city (str): City name.
-            country (str): Country code (`ISO 3166-1 alpha-2`).
-            state_code (str, optional): Optional state code.
-            limit (int, optional): Number of results to return. Defaults to 1.
+            city (str): The name of the city.
+            country (str): The country code (ISO 3166-1 alpha-2).
+            state_code (str, optional): The state code, only for US states.
+            limit (int, optional): Maximum number of results to return. Defaults to 1.
 
         Returns:
-            GeocodingResponse: Object containing the geocoding data.
-
-        Raises:
-            ValueError: If limit > 5 or limit < 1.
-            SubscriptionLevelError: If the API key does not have access to the requested data.
-            InvalidAPIKeyError: If the API key is invalid.
-            NotFoundError: If the location is not found.
-            TooManyRequestsError: If the API rate limit is exceeded.
-            OpenWeatherMapException: For internal server errors (500, 502, 503, 504).
-
-        .. _ISO 3166-1 alpha-2: https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2
+            GeocodingResponse: An instance of GeocodingResponse containing the geocoding data.
         """
-        if limit > 5 or limit < 1:
-            raise ValueError("Limit must be between 1 and 5.")
-        url = f"{self.url}&q={city},{country}"
-        if state_code:
-            url += f",{state_code}"
+        url = self.url + f"{city},{state_code},{country}" if state_code else self.url + f"{city},{country}"
         url += f"&limit={limit}"
-        response = _make_get_request(url)
-        return GeocodingResponse(response.json())
+        response = await _make_get_request_async(url)
+        return GeocodingResponse(response)
 
-    def get_by_zip(self, zip_code: str, country: str) -> GeocodingResponse:
+    async def get_by_zip(self, zip_code: str, country: str) -> GeocodingResponse:
         """
-        Fetches the geocoding data for a zip code and country from the OpenWeatherMap API and returns the response.
+        Fetches geocoding data for a zip code and country.
 
         Args:
-            zip_code (str): Zip code.
-            country (str): Country code (`ISO 3166-1 alpha-2`_).
+            zip_code (str): The zip code.
+            country (str): The country code (ISO 3166-1 alpha-2).
 
         Returns:
-            GeocodingResponse: Object containing the geocoding data.
-
-        Raises:
-            SubscriptionLevelError: If the API key does not have access to the requested data.
-            InvalidAPIKeyError: If the API key is invalid.
-            NotFoundError: If the location is not found.
-            TooManyRequestsError: If the API rate limit is exceeded.
-            OpenWeatherMapException: For internal server errors (500, 502, 503, 504).
-
-        .. _ISO 3166-1 alpha-2: https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2
+            GeocodingResponse: An instance of GeocodingResponse containing the geocoding data.
         """
-        url = f"{self.url.replace("direct?", "zip?")}&zip={zip_code},{country}"
-        response = _make_get_request(url)
-        return GeocodingResponse(response.json())
+        url = f"{self.url}{zip_code},{country}"
+        response = await _make_get_request_async(url)
+        return GeocodingResponse(response)
 
-    def get_by_coordinates(self, latitude: float, longitude: float, limit: int = 1) -> GeocodingResponse:
+    async def get_by_coordinates(self, latitude: float, longitude: float, limit: int = 1) -> GeocodingResponse:
         """
         Fetches the geocoding data for a set of coordinates from the OpenWeatherMap API and returns the response.
 
@@ -475,13 +417,16 @@ class GeocodingAPI(OpenWeatherMapAPI):
             raise ValueError("Limit must be between 1 and 5.")
         if not (-90 <= latitude <= 90 and -180 <= longitude <= 180):
             raise ValueError("Latitude must be between -90 and 90, and longitude must be between -180 and 180.")
-        url = f"{self.url}&lat={latitude}&lon={longitude}&limit={limit}"
+        url = f"{self.url.replace("&q=", "")}&lat={latitude}&lon={longitude}&limit={limit}"
         url = url.replace('direct?', 'reverse?')
-        response = _make_get_request(url)
-        return GeocodingResponse(response.json())
+        response = await _make_get_request_async(url)
+        return GeocodingResponse(response)
 
 class WeatherMapsAPI(OpenWeatherMapAPI):
-    """Wrapper for the Weather Map API from OpenWeatherMap."""
+    """
+    Asynchronous class for handling OpenWeatherMap Weather Map API requests.
+    This class is designed to be used with the Weather Map API endpoint.
+    """
     def __init__(self, api_key: str) -> None:
         """
         Initializes the Weather Map API wrapper.
@@ -495,7 +440,7 @@ class WeatherMapsAPI(OpenWeatherMapAPI):
             key=self.api_key,
         )
 
-    def get_weathermap(self, layer: Literal["clouds_new", "precipitation_new", "pressure_new", "wind_new", "temp_new", "wind_new"], x: int, y: int, zoom: int) -> bytes:
+    async def get_weathermap(self, layer: Literal["clouds_new", "precipitation_new", "pressure_new", "wind_new", "temp_new", "wind_new"], x: int, y: int, zoom: int) -> bytes:
         """
         Fetches the weather map image for a specific layer and coordinates.
 
@@ -540,10 +485,10 @@ class WeatherMapsAPI(OpenWeatherMapAPI):
         if layer not in ["clouds_new", "precipitation_new", "pressure_new", "wind_new", "temp_new", "wind_new"]:
             raise ValueError("Layer must be one of: 'clouds_new', 'precipitation_new', 'pressure_new', 'wind_new', 'temp_new', 'snow_new', 'rain_new'.")
         url = self.url.replace("LAYER", layer).replace("X", str(x)).replace("Y", str(y)).replace("Z", str(zoom))
-        response = _make_get_request(url)
-        return response.content
+        response = await _make_get_request_async(url, json=False)
+        return response
 
-    def download_weathermap(self, layer: Literal["clouds_new", "precipitation_new", "pressure_new", "wind_new", "temp_new", "snow_new", "rain_new"], x: int, y: int, zoom: int, filename: str) -> None:
+    async def download_weathermap(self, layer: Literal["clouds_new", "precipitation_new", "pressure_new", "wind_new", "temp_new", "snow_new", "rain_new"], x: int, y: int, zoom: int, filename: str) -> None:
         """
         Downloads the weather map image for a specific layer and coordinates to a file.
 
@@ -574,6 +519,6 @@ class WeatherMapsAPI(OpenWeatherMapAPI):
 
         .. _here: https://developers.google.com/maps/documentation/javascript/coordinates?hl=en#pixel-coordinates
         """
-        image_data = self.get_weathermap(layer, x, y, zoom)
+        image_data = await self.get_weathermap(layer, x, y, zoom)
         with open(filename, 'wb') as file:
             file.write(image_data)

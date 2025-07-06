@@ -23,6 +23,7 @@ extensions = [
     'sphinx.ext.autodoc',
     'sphinx.ext.napoleon',
     'sphinx.ext.intersphinx',
+    'sphinx.ext.mathjax',
     'sphinx_copybutton',
     'sphinx_autodoc_typehints',
     'myst_parser',
