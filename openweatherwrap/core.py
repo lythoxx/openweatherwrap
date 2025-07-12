@@ -741,12 +741,65 @@ class OneCallResponse:
         alerts_data = self.data.get('alerts', [])
         return [OpenWeatherAlert(alert) for alert in alerts_data] if alerts_data else []
 
-    # Related to daily aggregation
+class OneCallAggregationResponse:
+    """A class to handle the aggregation response from the OpenWeather One Call API."""
+
+    def __init__(self, data):
+        """ Initializes the OneCallAggregationResponse with the provided data.
+
+        :param data: A dictionary containing the aggregation response data from the One Call API.
+        """
+        self.data = data
+
+    def get_latitude(self) -> float:
+        """
+        Returns the latitude from the aggregation response data.
+        Latitude will be a value between -90 and 90.
+
+        :return latitude: Latitude as a float.
+        """
+        return self.data.get('lat', 0.0)
+
+    def get_longitude(self) -> float:
+        """
+        Returns the longitude from the aggregation response data.
+        Longitude will be a value between -180 and 180.
+
+        :return longitude: Longitude as a float.
+        """
+        return self.data.get('lon', 0.0)
+
+    def get_timezone(self) -> str:
+        """
+        Returns the timezone from the aggregation response data.
+        Timezone is a string representing the timezone of the location.
+        Example: '+00:00'
+
+        :return timezone: Timezone as a string.
+        """
+        return self.data.get('timezone', '+00:00')
+
+    def get_date(self) -> str:
+        """
+        Returns the date from the aggregation response data.
+        Date is a string in the format 'YYYY-MM-DD'.
+
+        :return date: Date as a string.
+        """
+        return self.data.get('date', '1970-01-01')
+
+    def get_units(self) -> str:
+        """
+        Returns the units used in the aggregation response data.
+        Units can be 'metric', 'imperial', or 'standard'.
+
+        :return units: Units as a string.
+        """
+        return self.data.get('units', 'standard')
+
     def get_cloud_cover_afternoon(self) -> int:
         """
         Returns a list of cloud cover values for the afternoon period of each daily forecast entry.
-
-        This is used in Daily Aggregation data.
 
         :return cloud_cover_afternoon: The cloud coverage.
         """
@@ -756,8 +809,6 @@ class OneCallResponse:
         """
         Returns a list of humidity values for the afternoon period of each daily forecast entry.
 
-        This is used in Daily Aggregation data.
-
         :return humidity_afternoon: The humidity.
         """
         return self.data.get('humidity', {}).get('afternoon', -1)
@@ -765,8 +816,6 @@ class OneCallResponse:
     def get_total_precipitation(self) -> float:
         """
         Returns a list of total precipitation values for each daily forecast entry.
-
-        This is used in Daily Aggregation data.
 
         :return total_precipitation: The total precipitation.
         """
@@ -776,8 +825,6 @@ class OneCallResponse:
         """
         Returns a list of minimum temperatures for each daily forecast entry.
 
-        This is used in Daily Aggregation data.
-
         :return temperature_min: The minimum temperature.
         """
         return self.data.get('temperature', {}).get('min', -1.0)
@@ -785,8 +832,6 @@ class OneCallResponse:
     def get_temperature_max(self) -> float:
         """
         Returns a list of maximum temperatures for each daily forecast entry.
-
-        This is used in Daily Aggregation data.
 
         :return temperature_max: The maximum themperature.
         """
@@ -796,8 +841,6 @@ class OneCallResponse:
         """
         Returns a list of afternoon temperatures for each daily forecast entry.
 
-        This is used in Daily Aggregation data.
-
         :return temperature_afternoon: The temperature in the afternoon.
         """
         return self.data.get('temperature', {}).get('afternoon', -1.0)
@@ -805,8 +848,6 @@ class OneCallResponse:
     def get_temperature_morning(self) -> float:
         """
         Returns a list of morning temperatures for each daily forecast entry.
-
-        This is used in Daily Aggregation data.
 
         :return temperature_morning: The temperature in the morning.
         """
@@ -816,8 +857,6 @@ class OneCallResponse:
         """
         Returns a list of nighttime temperatures for each daily forecast entry.
 
-        This is used in Daily Aggregation data.
-
         :return temperature_night: The temperature at night.
         """
         return self.data.get('temperature', {}).get('night', -1.0)
@@ -825,8 +864,6 @@ class OneCallResponse:
     def get_temperature_evening(self) -> float:
         """
         Returns a list of evening temperatures for each daily forecast entry.
-
-        This is used in Daily Aggregation data.
 
         :return temperature_evening: The temperature in the evening.
         """
@@ -836,8 +873,6 @@ class OneCallResponse:
         """
         Returns a list of atmospheric pressures for each daily forecast entry.
 
-        This is used in Daily Aggregation data.
-
         :return pressure_afternoon: The pressure for the afternoon.
         """
         return self.data.get('pressure', {}).get('afternoon', -1)
@@ -845,8 +880,6 @@ class OneCallResponse:
     def get_wind_max_speed(self) -> float:
         """
         Returns a list of maximum wind speeds for each daily forecast entry.
-
-        This is used in Daily Aggregation data.
 
         :return wind_max_speed: The maximum wind speed.
         """
@@ -856,17 +889,55 @@ class OneCallResponse:
         """
         Returns a list of maximum wind directions for each daily forecast entry.
 
-        This is used in Daily Aggregation data.
-
         :return wind_max_direction: The maximum wind direction.
         """
         return self.data.get('wind', {}).get('max', {}).get('direction', -1)
 
+class OneCallTimestampedResponse:
+    """A class to handle the timestamped response from the OpenWeather One Call API."""
+
+    def __init__(self, data):
+        """ Initializes the OneCallTimestampedResponse with the provided data.
+
+        :param data: A dictionary containing the timestamped response data from the One Call API.
+        """
+        self.data = data
+
+    def get_latitude(self) -> float:
+        """
+        Returns the latitude of the location from the response data.
+
+        :return latitude: Latitude as a float.
+        """
+        return self.data.get('lat', 0.0)
+
+    def get_longitude(self) -> float:
+        """
+        Returns the longitude of the location from the response data.
+
+        :return longitude: Longitude as a float.
+        """
+        return self.data.get('lon', 0.0)
+
+    def get_timezone(self) -> str:
+        """
+        Returns the timezone of the location from the response data.
+
+        :return timezone: Timezone as a string.
+        """
+        return self.data.get('timezone', 'UTC')
+
+    def get_timezone_offset(self) -> int:
+        """
+        Returns the timezone offset in seconds from the response data.
+
+        :return timezone_offset: Timezone offset as an integer.
+        """
+        return self.data.get('timezone_offset', 0)
+
     def get_time(self) -> int:
         """
         Returns the time of the response data.
-
-        This is used in Timestamped data.
 
         Returns:
             int: The time of the response data as a timestamp.
@@ -877,8 +948,6 @@ class OneCallResponse:
         """
         Returns the sunrise time from the response data.
 
-        This is used in Timestamped data.
-
         Returns:
             int: The sunrise time as a timestamp.
         """
@@ -887,8 +956,6 @@ class OneCallResponse:
     def get_sunset(self) -> int:
         """
         Returns the sunset time from the response data.
-
-        This is used in Timestamped data.
 
         Returns:
             int: The sunset time as a timestamp.
@@ -899,8 +966,6 @@ class OneCallResponse:
         """
         Returns the temperature from the response data.
 
-        This is used in Timestamped data.
-
         Returns:
             float: The temperature as a float.
         """
@@ -909,8 +974,6 @@ class OneCallResponse:
     def get_feels_like(self) -> float:
         """
         Returns the feels-like temperature from the response data.
-
-        This is used in Timestamped data.
 
         Returns:
             float: The feels-like temperature as a float.
@@ -921,8 +984,6 @@ class OneCallResponse:
         """
         Returns the atmospheric pressure from the response data.
 
-        This is used in Timestamped data.
-
         Returns:
             int: The atmospheric pressure as an integer.
         """
@@ -931,8 +992,6 @@ class OneCallResponse:
     def get_humidity(self) -> int:
         """
         Returns the humidity from the response data.
-
-        This is used in Timestamped data.
 
         Returns:
             int: The humidity as an integer.
@@ -943,8 +1002,6 @@ class OneCallResponse:
         """
         Returns the dew point from the response data.
 
-        This is used in Timestamped data.
-
         Returns:
             float: The dew point as a float.
         """
@@ -953,8 +1010,6 @@ class OneCallResponse:
     def get_uvi(self) -> float:
         """
         Returns the UV index from the response data.
-
-        This is used in Timestamped data.
 
         Returns:
             float: The UV index as a float.
@@ -965,8 +1020,6 @@ class OneCallResponse:
         """
         Returns the cloudiness from the response data.
 
-        This is used in Timestamped data.
-
         Returns:
             int: The cloudiness as an integer.
         """
@@ -975,8 +1028,6 @@ class OneCallResponse:
     def get_visibility(self) -> int:
         """
         Returns the visibility from the response data.
-
-        This is used in Timestamped data.
 
         Returns:
             int: The visibility as an integer.
@@ -987,8 +1038,6 @@ class OneCallResponse:
         """
         Returns the wind speed from the response data.
 
-        This is used in Timestamped data.
-
         Returns:
             float: The wind speed as a float.
         """
@@ -997,8 +1046,6 @@ class OneCallResponse:
     def get_wind_deg(self) -> int:
         """
         Returns the wind direction in degrees from the response data.
-
-        This is used in Timestamped data.
 
         Returns:
             int: The wind direction as an integer.
@@ -1009,8 +1056,6 @@ class OneCallResponse:
         """
         Returns the weather condition ID from the response data.
 
-        This is used in Timestamped data.
-
         Returns:
             int: The weather condition ID as an integer.
         """
@@ -1019,8 +1064,6 @@ class OneCallResponse:
     def get_weather_main(self) -> str | None:
         """
         Returns the main weather description from the response data.
-
-        This is used in Timestamped data.
 
         Returns:
             str | None: The main weather description as a string or None.
@@ -1031,8 +1074,6 @@ class OneCallResponse:
         """
         Returns the weather description from the response data.
 
-        This is used in Timestamped data.
-
         Returns:
             str | None: The weather description as a string or None.
         """
@@ -1041,8 +1082,6 @@ class OneCallResponse:
     def get_weather_icon(self) -> str | None:
         """
         Returns the weather icon code from the response data.
-cha
-        This is used in Timestamped data.
 
         Returns:
             str | None: The weather icon code as a string or None.

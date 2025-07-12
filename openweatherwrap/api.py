@@ -12,7 +12,7 @@ from geopy.geocoders import Nominatim
 
 from openweatherwrap._utils import _make_get_request
 
-from .core import AirPollutionResponse, CurrentWeatherResponse, GeocodingResponse, OneCallResponse, FiveDayForecastResponse
+from .core import AirPollutionResponse, CurrentWeatherResponse, GeocodingResponse, OneCallResponse, FiveDayForecastResponse, OneCallTimestampedResponse, OneCallAggregationResponse
 
 from .errors import *
 
@@ -122,7 +122,7 @@ class OneCallAPI(OpenWeatherMapAPI):
         response = _make_get_request(url)
         return OneCallResponse(response.json())
 
-    def get_timed_weather(self, timestamp: int) -> OneCallResponse:
+    def get_timed_weather(self, timestamp: int) -> OneCallTimestampedResponse:
         """
         Fetches the weather data for a specific timestamp from the one call API and returns the response as a `OneCallResponse` object`.
 
@@ -146,9 +146,9 @@ class OneCallAPI(OpenWeatherMapAPI):
             raise ValueError("Timestamp must be greater than or equal to January 1, 1979 (283996800).")
         url = f"{self.url.replace('onecall?', 'onecall/timemachine?')}&dt={timestamp}"
         response = _make_get_request(url)
-        return OneCallResponse(response.json())
+        return OneCallTimestampedResponse(response.json())
 
-    def get_aggregation(self, date: str) -> OneCallResponse:
+    def get_aggregation(self, date: str) -> OneCallAggregationResponse:
         """
         Fetches the weather data for a specific date from the one call API and returns the response as a `OneCallResponse` object`.
 
@@ -169,7 +169,7 @@ class OneCallAPI(OpenWeatherMapAPI):
         """
         url = f"{self.url.replace('onecall?', 'onecall/day_summary?')}&date={date}"
         response = _make_get_request(url)
-        return OneCallResponse(response.json())
+        return OneCallAggregationResponse(response.json())
 
     def get_overview(self) -> str:
         """

@@ -27,11 +27,14 @@ extensions = [
     'sphinx_copybutton',
     'sphinx_autodoc_typehints',
     'myst_parser',
+    'sphinx.ext.coverage',
 ]
 
 intersphinx_mapping = {
     'python': ('https://docs.python.org/3', None),
     'requests': ('https://requests.readthedocs.io/en/latest/', None),
+    'geopy': ('https://geopy.readthedocs.io/en/stable/', None),
+    'aiohttp': ('https://docs.aiohttp.org/en/stable/', None),
 }
 
 templates_path = ['_templates']
