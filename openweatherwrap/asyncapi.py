@@ -10,7 +10,7 @@ from .api import *
 
 import aiohttp
 
-from .core import OneCallResponse
+from .core import OneCallAggregationResponse, OneCallResponse, OneCallTimestampedResponse, CurrentWeatherResponse, FiveDayForecastResponse, AirPollutionResponse, GeocodingResponse
 
 class OneCallAPI(OpenWeatherMapAPI):
     """
@@ -67,7 +67,7 @@ class OneCallAPI(OpenWeatherMapAPI):
         response = await _make_get_request_async(url)
         return OneCallResponse(response)
 
-    async def get_timed_weather(self, timestamp: int) -> OneCallResponse:
+    async def get_timed_weather(self, timestamp: int) -> OneCallTimestampedResponse:
         """
         Asynchronously fetches weather data for a specific timestamp from the One Call API.
 
@@ -93,9 +93,9 @@ class OneCallAPI(OpenWeatherMapAPI):
         url = self.url.replace('onecall?', 'onecall/timemachine?')
         url += f"&dt={timestamp}"
         response = await _make_get_request_async(url)
-        return OneCallResponse(response)
+        return OneCallTimestampedResponse(response)
 
-    async def get_aggregation(self, date: str) -> OneCallResponse:
+    async def get_aggregation(self, date: str) -> OneCallAggregationResponse:
         """
         Asynchronously fetches the weather data for a specific date from the one call API and returns the response as a `OneCallResponse` object`.
 
@@ -117,7 +117,7 @@ class OneCallAPI(OpenWeatherMapAPI):
         url = self.url.replace('onecall?', 'onecall/day_summary?')
         url += f"&date={date}"
         response = await _make_get_request_async(url)
-        return OneCallResponse(response)
+        return OneCallAggregationResponse(response)
 
     async def get_overview(self) -> str:
         """
