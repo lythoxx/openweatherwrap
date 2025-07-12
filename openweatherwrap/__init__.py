@@ -22,7 +22,7 @@ print(weather_data.get_current_temp())
 
 import requests # Using the checks from the library to check if it works
 
-__version__ = "1.0.0"
+__version__ = "1.1.0"
 __author__ = "lythox"
 __license__ = "Attribution-ShareAlike 4.0 International"
 
